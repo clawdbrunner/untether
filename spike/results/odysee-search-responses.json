@@ -1,0 +1,469 @@
+[
+  {
+    "query": "Linus Tech Tips",
+    "method": "lighthouse",
+    "status": "SUCCESS",
+    "total": 5,
+    "topResults": [
+      {
+        "name": "@linuxtechtips",
+        "claimId": "ac7080ea53ebf446f2d3535a8bd95febde1abd5b",
+        "title": ""
+      },
+      {
+        "name": "@michuzet",
+        "claimId": "eed7d4b180ea177090ee08abadac4af9111e5299",
+        "title": ""
+      },
+      {
+        "name": "@informaGTica",
+        "claimId": "f13a737badc8c341f2035ed2a25a80d6ae58ebb0",
+        "title": ""
+      },
+      {
+        "name": "@MazharTechTips",
+        "claimId": "fa08137fb4873b62619b04bcd7e3a3d91da25c4e",
+        "title": ""
+      },
+      {
+        "name": "@liamstechtips",
+        "claimId": "9b7f857edbbc4256f937fb22f5f29c5658172279",
+        "title": ""
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 456,
+    "rawResponseShape": [
+      "channel_claim_id",
+      "claimId",
+      "name"
+    ]
+  },
+  {
+    "query": "The Linux Experiment",
+    "method": "lighthouse",
+    "status": "SUCCESS",
+    "total": 3,
+    "topResults": [
+      {
+        "name": "@ArsenTech",
+        "claimId": "403949433fdd0eaa0ca86461e8e3fe77b5c9fa3c",
+        "title": ""
+      },
+      {
+        "name": "@flushyourmeds2033",
+        "claimId": "13d22da621709e8a9436e9d5a8efe61bdddb3a7b",
+        "title": ""
+      },
+      {
+        "name": "@gajeshsnaik",
+        "claimId": "b8117e195fef60b6cc7cd3a8b399082b6711d644",
+        "title": ""
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 409,
+    "rawResponseShape": [
+      "channel_claim_id",
+      "claimId",
+      "name"
+    ]
+  },
+  {
+    "query": "Marques Brownlee",
+    "method": "lighthouse",
+    "status": "SUCCESS",
+    "total": 0,
+    "topResults": [],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 148,
+    "rawResponseShape": []
+  },
+  {
+    "query": "Veritasium",
+    "method": "lighthouse",
+    "status": "SUCCESS",
+    "total": 3,
+    "topResults": [
+      {
+        "name": "@veritasium",
+        "claimId": "fb364ef587872515f545a5b4b3182b58073f230f",
+        "title": ""
+      },
+      {
+        "name": "@veritasium_en_español",
+        "claimId": "7eae8e5e2438cf2238a9849f5e356d27efc6c3c8",
+        "title": ""
+      },
+      {
+        "name": "@veritas4u",
+        "claimId": "9d6ccd9b6ba0704a2f8fd35c2ef542848eca7038",
+        "title": ""
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 411,
+    "rawResponseShape": [
+      "channel_claim_id",
+      "claimId",
+      "name"
+    ]
+  },
+  {
+    "query": "Fireship",
+    "method": "lighthouse",
+    "status": "SUCCESS",
+    "total": 1,
+    "topResults": [
+      {
+        "name": "@fireship",
+        "claimId": "6f3940e512a40f2ac8068103bd9195fa07107043",
+        "title": ""
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 132,
+    "rawResponseShape": [
+      "channel_claim_id",
+      "claimId",
+      "name"
+    ]
+  },
+  {
+    "query": "Linus Tech Tips",
+    "method": "claim_search",
+    "status": "SUCCESS",
+    "total": 2618,
+    "topResults": [
+      {
+        "name": "@RobBraxmanTech",
+        "claimId": "68044a0cf5ed7534872af5149d4e0c43a9a1d06a",
+        "url": "lbry://@RobBraxmanTech#68044a0cf5ed7534872af5149d4e0c43a9a1d06a",
+        "title": "Rob Braxman Tech",
+        "description": "I'm the Internet Privacy Guy.  I'm a public interest hacker and technologist. I use my extensive kno",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCYVU6rModlGxvJbszCclGGw"
+      },
+      {
+        "name": "@surveillancereport",
+        "claimId": "2c9071800bc35ffc0cec48dfa133c167ace79406",
+        "url": "lbry://@surveillancereport#2c9071800bc35ffc0cec48dfa133c167ace79406",
+        "title": "Surveillance Report",
+        "description": "Weekly security and privacy news - Presented by Techlore & The New Oil\nWebsite: https://surveillance",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UC0W_BIuwk8D0Bv4THbVZZOQ"
+      },
+      {
+        "name": "@GaminGHD",
+        "claimId": "086d2bacf441cef45ff15b5afe163d0b03a9f7ea",
+        "url": "lbry://@GaminGHD#086d2bacf441cef45ff15b5afe163d0b03a9f7ea",
+        "title": "",
+        "thumbnailUrl": "https://spee.ch/b/4d31e602-ab12-4b00-82dd-c980d88cb4bb.jpg"
+      },
+      {
+        "name": "@Crypto-Tips",
+        "claimId": "bca584685bd0fb5760f46e6a060a1b2c68c99b46",
+        "url": "lbry://@Crypto-Tips#bca584685bd0fb5760f46e6a060a1b2c68c99b46",
+        "title": "Crypto Tips",
+        "description": "I DO NOT PARTICIPATE IN PAID REVIEWS OR PROMOTIONS. \nIF YOU HAVE BEEN APPROACHED BY SOMEONE ON TELEG",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCavTvSwEoRABvnPtLg0e6LQ"
+      },
+      {
+        "name": "@BrodieRobertson",
+        "claimId": "56e86eb938c0b93beccde0fbaaead65755139a10",
+        "url": "lbry://@BrodieRobertson#56e86eb938c0b93beccde0fbaaead65755139a10",
+        "title": "Brodie Robertson | Linux Tips & Tricks",
+        "description": "Getting the most of my computer with Arch Linux\n\nFor all general enquiries feel free to contact me T",
+        "thumbnailUrl": "https://spee.ch/1/087637d2-a34e-41c0-ab0e-1bdbbca5d92c.png"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 1006,
+    "rawResponseShape": [
+      "address",
+      "amount",
+      "canonical_url",
+      "claim_id",
+      "claim_op",
+      "confirmations",
+      "has_signing_key",
+      "height",
+      "meta",
+      "name",
+      "normalized_name",
+      "nout",
+      "permanent_url",
+      "short_url",
+      "timestamp",
+      "txid",
+      "type",
+      "value",
+      "value_type"
+    ]
+  },
+  {
+    "query": "The Linux Experiment",
+    "method": "claim_search",
+    "status": "SUCCESS",
+    "total": 3146,
+    "topResults": [
+      {
+        "name": "@RobBraxmanTech",
+        "claimId": "68044a0cf5ed7534872af5149d4e0c43a9a1d06a",
+        "url": "lbry://@RobBraxmanTech#68044a0cf5ed7534872af5149d4e0c43a9a1d06a",
+        "title": "Rob Braxman Tech",
+        "description": "I'm the Internet Privacy Guy.  I'm a public interest hacker and technologist. I use my extensive kno",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCYVU6rModlGxvJbszCclGGw"
+      },
+      {
+        "name": "@techlore",
+        "claimId": "3818d442f75be9c3685b6ad58e5ceb8569ade5ee",
+        "url": "lbry://@techlore#3818d442f75be9c3685b6ad58e5ceb8569ade5ee",
+        "title": "Techlore",
+        "description": "Techlore - digital rights for all.\nSurveillance Report: https://odysee.com/@surveillancereport:2\n\nNo",
+        "thumbnailUrl": "https://thumbs.odycdn.com/86c08b9a80dad6c15bdf44a8305c3ce7.png"
+      },
+      {
+        "name": "@ResistTheNWO",
+        "claimId": "1570960b7f1c1c1d5af7286e7a61ed97d663434d",
+        "url": "lbry://@ResistTheNWO#1570960b7f1c1c1d5af7286e7a61ed97d663434d",
+        "title": "Resist the New World Order",
+        "description": "Aggregating solution-focussed content to help you to opt out of tyranny.",
+        "thumbnailUrl": "https://spee.ch/d/18d7a7da76dc8cd3.jpg"
+      },
+      {
+        "name": "@Luc_Larabie",
+        "claimId": "e86bf2431fcec4ca21797cfb99901bd57f9701c1",
+        "url": "lbry://@Luc_Larabie#e86bf2431fcec4ca21797cfb99901bd57f9701c1",
+        "title": "Gamer With The French Accent",
+        "description": "French Canadian who have a true passion for gaming. If you enjoy old games and some modern ones, fas",
+        "thumbnailUrl": "https://thumbs.odycdn.com/29e5b27b3b524368aa87bd1601ddaa45.webp"
+      },
+      {
+        "name": "@HackerSploit",
+        "claimId": "26c9b54d7e47dc8f7dc847821b26fce3009ee1a0",
+        "url": "lbry://@HackerSploit#26c9b54d7e47dc8f7dc847821b26fce3009ee1a0",
+        "title": "HackerSploit",
+        "description": "HackerSploit is the leading provider of free Infosec and cybersecurity training. Our goal is to make",
+        "thumbnailUrl": "https://spee.ch/b/a664c587b452af63.png"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 499,
+    "rawResponseShape": [
+      "address",
+      "amount",
+      "canonical_url",
+      "claim_id",
+      "claim_op",
+      "confirmations",
+      "has_signing_key",
+      "height",
+      "meta",
+      "name",
+      "normalized_name",
+      "nout",
+      "permanent_url",
+      "short_url",
+      "timestamp",
+      "txid",
+      "type",
+      "value",
+      "value_type"
+    ]
+  },
+  {
+    "query": "Marques Brownlee",
+    "method": "claim_search",
+    "status": "SUCCESS",
+    "total": 5,
+    "topResults": [
+      {
+        "name": "@IgordeLimaMarques",
+        "claimId": "efa44a11104a9d050fb47cb71de6753e6dc0ae2c",
+        "url": "lbry://@IgordeLimaMarques#efa44a11104a9d050fb47cb71de6753e6dc0ae2c",
+        "title": "",
+        "thumbnailUrl": "https://spee.ch/d/efeb27ec1843bad7.jpg"
+      },
+      {
+        "name": "@FINDESTEMPSENLIVE",
+        "claimId": "24088f04da5c3a35239de71924d1906925109517",
+        "url": "lbry://@FINDESTEMPSENLIVE#24088f04da5c3a35239de71924d1906925109517",
+        "title": "LA FIN DES TEMPS EN LIVE",
+        "description": "LES EVENEMENTS DE LA FIN DES TEMPS EN LIVE est une chaine Chrétienne qui a pour but de recenser tout",
+        "thumbnailUrl": "https://spee.ch/e/a55279f75de79f00.jpg"
+      },
+      {
+        "name": "@lemarquepages",
+        "claimId": "2a6bafa71dc51bc62f1a72cb07b63e76fe3a4b1c",
+        "url": "lbry://@lemarquepages#2a6bafa71dc51bc62f1a72cb07b63e76fe3a4b1c",
+        "title": "Dans notre Terrier",
+        "description": "Le Marque Pages - Plongez dans les univers les plus fascinants de la pop culture et de la fantasy ! ",
+        "thumbnailUrl": "https://thumbs.odycdn.com/9fc01701a2e4700f5bda036f0186da61.webp"
+      },
+      {
+        "name": "@MarqusMarsMusic",
+        "claimId": "403a456905afcd9d6cb33818d1b633a0a045b496",
+        "url": "lbry://@MarqusMarsMusic#403a456905afcd9d6cb33818d1b633a0a045b496",
+        "title": "Marqus Mars",
+        "description": "MARQUS MARS - The Ultimate Music Revolution  - Electronic Rock 'n' Roll, Trance, Ambient, Funk & Reg",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCTayRIvK4x81CApqnT0qvmA"
+      },
+      {
+        "name": "@OTDTV",
+        "claimId": "3185e68ed28a1032d4f02fc00693959c42f621bd",
+        "url": "lbry://@OTDTV#3185e68ed28a1032d4f02fc00693959c42f621bd",
+        "title": "OTD® TV",
+        "description": "Bienvenue sur la chaine officiel de la marque Française OTD®",
+        "thumbnailUrl": "https://thumbs.odycdn.com/6f184df9f0d01c151cd607edd64076cd.webp"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 194,
+    "rawResponseShape": [
+      "address",
+      "amount",
+      "canonical_url",
+      "claim_id",
+      "claim_op",
+      "confirmations",
+      "has_signing_key",
+      "height",
+      "meta",
+      "name",
+      "normalized_name",
+      "nout",
+      "permanent_url",
+      "short_url",
+      "timestamp",
+      "txid",
+      "type",
+      "value",
+      "value_type"
+    ]
+  },
+  {
+    "query": "Veritasium",
+    "method": "claim_search",
+    "status": "SUCCESS",
+    "total": 10,
+    "topResults": [
+      {
+        "name": "@veritasium",
+        "claimId": "fb364ef587872515f545a5b4b3182b58073f230f",
+        "url": "lbry://@veritasium#fb364ef587872515f545a5b4b3182b58073f230f",
+        "title": "Veritasium",
+        "description": "An element of truth - videos about science, education, and anything else I find interesting.",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCHnyfMqiRRG1u-2MsSQLbXA"
+      },
+      {
+        "name": "@veritasium",
+        "claimId": "a33a754545d2cf1c6059c9f0a9dc4158c7296d48",
+        "url": "lbry://@veritasium#a33a754545d2cf1c6059c9f0a9dc4158c7296d48",
+        "title": ""
+      },
+      {
+        "name": "@veritasium",
+        "claimId": "1836a258e4f9f686b9c1fa39d938d29d5db64520",
+        "url": "lbry://@veritasium#1836a258e4f9f686b9c1fa39d938d29d5db64520",
+        "title": "veritasium"
+      },
+      {
+        "name": "@Veritasium",
+        "claimId": "588681a5aeacb1018ddf30773f7663b6f102c8c0",
+        "url": "lbry://@Veritasium#588681a5aeacb1018ddf30773f7663b6f102c8c0",
+        "title": ""
+      },
+      {
+        "name": "@veritasium_en_español",
+        "claimId": "7eae8e5e2438cf2238a9849f5e356d27efc6c3c8",
+        "url": "lbry://@veritasium_en_español#7eae8e5e2438cf2238a9849f5e356d27efc6c3c8",
+        "title": "Veritasium en español",
+        "description": "Un elemento de la verdad. Doblaje de videos de ciencias e ingeniería.\n\nEsta es la traducción oficial",
+        "thumbnailUrl": "https://spee.ch/8/8a34a58bfa8bfff5.jpg"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 192,
+    "rawResponseShape": [
+      "address",
+      "amount",
+      "canonical_url",
+      "claim_id",
+      "claim_op",
+      "confirmations",
+      "has_signing_key",
+      "height",
+      "meta",
+      "name",
+      "normalized_name",
+      "nout",
+      "permanent_url",
+      "short_url",
+      "timestamp",
+      "txid",
+      "type",
+      "value",
+      "value_type"
+    ]
+  },
+  {
+    "query": "Fireship",
+    "method": "claim_search",
+    "status": "SUCCESS",
+    "total": 0,
+    "topResults": [],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 142,
+    "rawResponseShape": []
+  },
+  {
+    "query": "@linustechtips",
+    "method": "resolve",
+    "status": "SUCCESS",
+    "total": 1,
+    "topResults": [
+      {
+        "name": "@LinusTechTips",
+        "claimId": "89d039ac757af120faded9e55d4956f47c7c9a67",
+        "url": "lbry://@LinusTechTips#89d039ac757af120faded9e55d4956f47c7c9a67",
+        "title": ""
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 140
+  },
+  {
+    "query": "@TheLinuxExperiment",
+    "method": "resolve",
+    "status": "SUCCESS",
+    "total": 1,
+    "topResults": [
+      {
+        "name": "@TheLinuxExperiment",
+        "claimId": "ece95ea5fddc7502db1ca0cae24a713c25fcaecb",
+        "url": "lbry://@TheLinuxExperiment#ece95ea5fddc7502db1ca0cae24a713c25fcaecb",
+        "title": "TheLinuxExperiment (PlaceHolder)",
+        "description": "I'm holding this @ in hopes of a return of TheLinuxExperiment to Odysee.\n\nIf you are Nick, you can c"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 177
+  },
+  {
+    "query": "@veritasium",
+    "method": "resolve",
+    "status": "SUCCESS",
+    "total": 1,
+    "topResults": [
+      {
+        "name": "@veritasium",
+        "claimId": "fb364ef587872515f545a5b4b3182b58073f230f",
+        "url": "lbry://@veritasium#fb364ef587872515f545a5b4b3182b58073f230f",
+        "title": "Veritasium",
+        "description": "An element of truth - videos about science, education, and anything else I find interesting.",
+        "thumbnailUrl": "https://thumbnails.lbry.com/UCHnyfMqiRRG1u-2MsSQLbXA"
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 110
+  }
+]

@@ -1,0 +1,1578 @@
+{
+  "channels": [
+    {
+      "id": "UCXuqSBlHAE6Xw-yeJA0Tunw",
+      "title": "Linus Tech Tips",
+      "url": "https://www.youtube.com/@LinusTechTips",
+      "handle": "LinusTechTips",
+      "description": "Linus Tech Tips is a passionate team of \"professionally curious\" experts in consumer technology and video production who aim to educate and entertain.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/U_7GWetO6k4sq3pAkbFEIIWzZLKcIJlGJqNz6NQAhgqF6DVD5pllwWF6trSUWEIRn4MkhNlhy9Y=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 16800000
+    },
+    {
+      "id": "UCSHZKyawUMSsndEJOqp01pQ",
+      "title": "The Linux Experiment",
+      "url": "https://www.youtube.com/@TheLinuxEXP",
+      "handle": "TheLinuxEXP",
+      "description": "Making Linux accessible: no techno babble, no super technical content. Just Linux desktop news, simple tutorials, application spotlights, and opinion pieces trying to stay positive, without gatekeeping.\nI also often reach out to the community to get feedback and poll results, so subscribe to be a part of that :)\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/GMktJ9TTrbpdxDGuT9n42QefQkWNfnCESAdYDEXEqtCfTVxuYJqLPv7GdgchI49WhvUmayQdGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 426000
+    },
+    {
+      "id": "UCBJycsmduvYEL83R_U4JriQ",
+      "title": "Marques Brownlee",
+      "url": "https://www.youtube.com/@mkbhd",
+      "handle": "mkbhd",
+      "description": "MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality!\n\nbusiness@MKBHD.com\n\nNYC",
+      "avatarUrl": "https://yt3.googleusercontent.com/zi_48HwHU4s0Hnb6tZuvRzTfCPHrLEnrtIMDLzMauDEyDmURh9JZ4wrNd3lKr7m9uVnT4YjYKw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 21000000
+    },
+    {
+      "id": "UC1_uQISPCtrgJeeHdSXVuLg",
+      "title": "Fireship",
+      "url": "https://www.youtube.com/@Fireship",
+      "handle": "Fireship",
+      "description": "High-intensity ⚡ code tutorials and tech news to help you ship your app faster. New videos every week covering the topics every programmer should know. \n\nThe original home of #100SecondsOfCode #TheCodeReport and #CodeThisNotThat. Created by Jeff Delaney. \n\nWant more Fireship?\n\n🗞️ Newsletter – https://bytes.dev\n🧠 Courses – https://fireship.dev\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/B5iaLfhJJ65Gh20ZsOaXJZ6eeKCoLzoU-rtFQcYncWSs_j5SFYi5p80kChpSnX6xO54to0q4EXo=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 4210000
+    },
+    {
+      "id": "UCYO_jab_esuFRV4b17AJtAw",
+      "title": "3Blue1Brown",
+      "url": "https://www.youtube.com/@3blue1brown",
+      "handle": "3blue1brown",
+      "description": "My name is Grant Sanderson. Videos here cover a variety of topics in math, or adjacent fields like physics and CS, all with an emphasis on visualizing the core ideas. The goal is to use animation to help elucidate and motivate otherwise tricky topics, and for difficult problems to be made simple with changes in perspective.\n\nFor more information, other projects, FAQs, and inquiries see the website: https://www.3blue1brown.com",
+      "avatarUrl": "https://yt3.googleusercontent.com/JfUD9Tu79zgoYGo5-WdP5YYj0XvAjPgV3c2Snj-cgy8jslro0Ln5by024zWL7XDin7Vs-qnxVg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 8360000
+    },
+    {
+      "id": "UCsXVk37bltHxD1rDPwtNM8Q",
+      "title": "Kurzgesagt – In a Nutshell",
+      "url": "https://www.youtube.com/@Kurzgesagt",
+      "handle": "Kurzgesagt",
+      "description": "Animation videos explaining things with optimistic nihilism since 12,013.\n\nWe’re a team of illustrators, animators, number crunchers and one dog who aim to spark curiosity about science and the world we live in. To us nothing is boring if you tell a good story.\n\nFor updates on our videos and other news from the kurzgesagt universe follow us on Twitter, Facebook, Instagram and LinkedIn.\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/8sT9BbnbNORM5aSzSyHDFV_1ItIwaiLq4ctD4aLeMJnLiZYNCr73eN_-0Xrhy5joVL_Ewet5=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 25300000
+    },
+    {
+      "id": "UC6nSFpj9HTCZ5t-N3Rm3-SI",
+      "title": "Vsauce",
+      "url": "https://www.youtube.com/@Vsauce",
+      "handle": "Vsauce",
+      "description": "Our World is Amazing. \n\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/KqAxDwNOr6d1i7viCH6H0Xfx-jpeIyPmnrVfgQNrRhUiidcs4RSSMT1UIE2dPUH_gD8INmza=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 24900000
+    },
+    {
+      "id": "UCz4GouOBT3Q7qPGUAJmPsgQ",
+      "title": "ColdFusion",
+      "url": "https://www.youtube.com/@ColdFusion",
+      "handle": "ColdFusion",
+      "description": "Hi, my name is Dagogo Altraide and I create and narrate all the videos on here.\nThis channel aims to let you experience the cutting edge of the world around us in a relaxed atmosphere.\nLearn the captivating stories about how our world came to be and also learn what's happening in the cutting edge today.\n\n--- New Thinking Book written by Dagogo Altraide ---\nLearn the stories of those who invented the things we use everyday. This book is rated the 9th best technology history book of all time by Book Authority!\nAudio Book: https://goo.gl/p8auh3\nGet the book on Amazon US: http://bit.ly/NewThinkingbook\nAmazon India Link: https://goo.gl/qJCC1T\nAmazon UK link: https://goo.gl/RBxisf\nEbook on Google Play: http://bit.ly/NewThinkingGooglePlay\n\nMERCH:\n\nINTERNATIONAL: https://store.coldfusioncollective.com/\nAUSTRALIA: https://shop.coldfusioncollective.com/\n\nContact | *Business ONLY* dagogo@coldfusioncollective.com\n\nJoin the fun on instagram: \n\n@ColdFusiontv\n\nFacebook | www.facebook.com/coldfusiontv",
+      "avatarUrl": "https://yt3.googleusercontent.com/Fufi6spwo5E_ulJylpC4cwAnDUGGtBeGbJif_D8CKrCQ0tm-miKYWeueiOnRCcATjWSW9qzzKA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 5200000
+    },
+    {
+      "id": "UCBcRF18a7Qf58cCRy5xuWwQ",
+      "title": "Jonathan Morrison",
+      "url": "https://www.youtube.com/@JonathanMorrison",
+      "handle": "JonathanMorrison",
+      "avatarUrl": "https://yt3.googleusercontent.com/ytc/AIdro_m8Kpxt2uDEDozHGJ1nuNh5N9g5IsZLbYnTOzCP4gwaEsE=s900-c-k-c0x00ffffff-no-rj",
+      "subscriberCount": 120
+    },
+    {
+      "id": "UCFbNvxplHOIOPe5Y2jFc1rQ",
+      "title": "TechLinked",
+      "url": "https://www.youtube.com/@TechLinked",
+      "handle": "TechLinked",
+      "description": "TechLinked keeps you up to date with a fast, funny roundup of the latest tech news every Monday, Wednesday, and Friday.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+      "avatarUrl": "https://yt3.googleusercontent.com/jBCP5QLbmjyXbw3WHUb8Kl1FTVjUxD80SOHXq_1jjq_13QQ7Y2XENRE7HHZ6HrkKxISBafi-Dg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "subscriberCount": 1990000
+    }
+  ],
+  "matches": [
+    {
+      "youtubeChannel": {
+        "id": "UCXuqSBlHAE6Xw-yeJA0Tunw",
+        "title": "Linus Tech Tips",
+        "url": "https://www.youtube.com/@LinusTechTips",
+        "handle": "LinusTechTips",
+        "description": "Linus Tech Tips is a passionate team of \"professionally curious\" experts in consumer technology and video production who aim to educate and entertain.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/U_7GWetO6k4sq3pAkbFEIIWzZLKcIJlGJqNz6NQAhgqF6DVD5pllwWF6trSUWEIRn4MkhNlhy9Y=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 16800000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCSHZKyawUMSsndEJOqp01pQ",
+        "title": "The Linux Experiment",
+        "url": "https://www.youtube.com/@TheLinuxEXP",
+        "handle": "TheLinuxEXP",
+        "description": "Making Linux accessible: no techno babble, no super technical content. Just Linux desktop news, simple tutorials, application spotlights, and opinion pieces trying to stay positive, without gatekeeping.\nI also often reach out to the community to get feedback and poll results, so subscribe to be a part of that :)\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/GMktJ9TTrbpdxDGuT9n42QefQkWNfnCESAdYDEXEqtCfTVxuYJqLPv7GdgchI49WhvUmayQdGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 426000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "verified",
+          "signals": [
+            {
+              "type": "back_reference",
+              "strength": 0.95,
+              "detail": "Candidate links back to YouTube channel"
+            },
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @thelinuxexperiment_channel"
+            }
+          ],
+          "score": 1
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCBJycsmduvYEL83R_U4JriQ",
+        "title": "Marques Brownlee",
+        "url": "https://www.youtube.com/@mkbhd",
+        "handle": "mkbhd",
+        "description": "MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality!\n\nbusiness@MKBHD.com\n\nNYC",
+        "avatarUrl": "https://yt3.googleusercontent.com/zi_48HwHU4s0Hnb6tZuvRzTfCPHrLEnrtIMDLzMauDEyDmURh9JZ4wrNd3lKr7m9uVnT4YjYKw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 21000000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UC1_uQISPCtrgJeeHdSXVuLg",
+        "title": "Fireship",
+        "url": "https://www.youtube.com/@Fireship",
+        "handle": "Fireship",
+        "description": "High-intensity ⚡ code tutorials and tech news to help you ship your app faster. New videos every week covering the topics every programmer should know. \n\nThe original home of #100SecondsOfCode #TheCodeReport and #CodeThisNotThat. Created by Jeff Delaney. \n\nWant more Fireship?\n\n🗞️ Newsletter – https://bytes.dev\n🧠 Courses – https://fireship.dev\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/B5iaLfhJJ65Gh20ZsOaXJZ6eeKCoLzoU-rtFQcYncWSs_j5SFYi5p80kChpSnX6xO54to0q4EXo=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 4210000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "avatar_hash",
+              "strength": 0.875,
+              "detail": "Avatar similarity: 88%"
+            }
+          ],
+          "score": 0.525
+        },
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCYO_jab_esuFRV4b17AJtAw",
+        "title": "3Blue1Brown",
+        "url": "https://www.youtube.com/@3blue1brown",
+        "handle": "3blue1brown",
+        "description": "My name is Grant Sanderson. Videos here cover a variety of topics in math, or adjacent fields like physics and CS, all with an emphasis on visualizing the core ideas. The goal is to use animation to help elucidate and motivate otherwise tricky topics, and for difficult problems to be made simple with changes in perspective.\n\nFor more information, other projects, FAQs, and inquiries see the website: https://www.3blue1brown.com",
+        "avatarUrl": "https://yt3.googleusercontent.com/JfUD9Tu79zgoYGo5-WdP5YYj0XvAjPgV3c2Snj-cgy8jslro0Ln5by024zWL7XDin7Vs-qnxVg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 8360000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCsXVk37bltHxD1rDPwtNM8Q",
+        "title": "Kurzgesagt – In a Nutshell",
+        "url": "https://www.youtube.com/@Kurzgesagt",
+        "handle": "Kurzgesagt",
+        "description": "Animation videos explaining things with optimistic nihilism since 12,013.\n\nWe’re a team of illustrators, animators, number crunchers and one dog who aim to spark curiosity about science and the world we live in. To us nothing is boring if you tell a good story.\n\nFor updates on our videos and other news from the kurzgesagt universe follow us on Twitter, Facebook, Instagram and LinkedIn.\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/8sT9BbnbNORM5aSzSyHDFV_1ItIwaiLq4ctD4aLeMJnLiZYNCr73eN_-0Xrhy5joVL_Ewet5=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 25300000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UC6nSFpj9HTCZ5t-N3Rm3-SI",
+        "title": "Vsauce",
+        "url": "https://www.youtube.com/@Vsauce",
+        "handle": "Vsauce",
+        "description": "Our World is Amazing. \n\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/KqAxDwNOr6d1i7viCH6H0Xfx-jpeIyPmnrVfgQNrRhUiidcs4RSSMT1UIE2dPUH_gD8INmza=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 24900000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCz4GouOBT3Q7qPGUAJmPsgQ",
+        "title": "ColdFusion",
+        "url": "https://www.youtube.com/@ColdFusion",
+        "handle": "ColdFusion",
+        "description": "Hi, my name is Dagogo Altraide and I create and narrate all the videos on here.\nThis channel aims to let you experience the cutting edge of the world around us in a relaxed atmosphere.\nLearn the captivating stories about how our world came to be and also learn what's happening in the cutting edge today.\n\n--- New Thinking Book written by Dagogo Altraide ---\nLearn the stories of those who invented the things we use everyday. This book is rated the 9th best technology history book of all time by Book Authority!\nAudio Book: https://goo.gl/p8auh3\nGet the book on Amazon US: http://bit.ly/NewThinkingbook\nAmazon India Link: https://goo.gl/qJCC1T\nAmazon UK link: https://goo.gl/RBxisf\nEbook on Google Play: http://bit.ly/NewThinkingGooglePlay\n\nMERCH:\n\nINTERNATIONAL: https://store.coldfusioncollective.com/\nAUSTRALIA: https://shop.coldfusioncollective.com/\n\nContact | *Business ONLY* dagogo@coldfusioncollective.com\n\nJoin the fun on instagram: \n\n@ColdFusiontv\n\nFacebook | www.facebook.com/coldfusiontv",
+        "avatarUrl": "https://yt3.googleusercontent.com/Fufi6spwo5E_ulJylpC4cwAnDUGGtBeGbJif_D8CKrCQ0tm-miKYWeueiOnRCcATjWSW9qzzKA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 5200000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCBcRF18a7Qf58cCRy5xuWwQ",
+        "title": "Jonathan Morrison",
+        "url": "https://www.youtube.com/@JonathanMorrison",
+        "handle": "JonathanMorrison",
+        "avatarUrl": "https://yt3.googleusercontent.com/ytc/AIdro_m8Kpxt2uDEDozHGJ1nuNh5N9g5IsZLbYnTOzCP4gwaEsE=s900-c-k-c0x00ffffff-no-rj",
+        "subscriberCount": 120
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCFbNvxplHOIOPe5Y2jFc1rQ",
+        "title": "TechLinked",
+        "url": "https://www.youtube.com/@TechLinked",
+        "handle": "TechLinked",
+        "description": "TechLinked keeps you up to date with a fast, funny roundup of the latest tech news every Monday, Wednesday, and Friday.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/jBCP5QLbmjyXbw3WHUb8Kl1FTVjUxD80SOHXq_1jjq_13QQ7Y2XENRE7HHZ6HrkKxISBafi-Dg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 1990000
+      },
+      "platform": "peertube",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+            "handle": "thelinuxexperiment_channel",
+            "displayName": "The Linux Experiment",
+            "avatarUrl": "https://tilvids.com/lazy-static/avatars/b7663a44-559c-4512-a470-837ce002839b.jpg",
+            "subscriberCount": 4230,
+            "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and general helpful tidbits and impressions on Linux desktop environments, applications, and news. \n\nYou might see a bit of Linux gaming here and there, and some more personal opinion pieces, but in the end, it's more or less all about Linux and FOSS !\n\nIf you want to stay up to snuff, follow me on Mastodon: https://mastodon.social/@thelinuxEXP \n\nIf you can, consider supporting the channel here: \nhttps://www.patreon.com/thelinuxexperiment",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://peertube.heise.de/video-channels/ct_3003",
+            "handle": "ct_3003",
+            "displayName": "c’t 3003",
+            "avatarUrl": "https://peertube.heise.de/lazy-static/avatars/b086a602-1c26-49ca-ad56-11d7044b6733.jpg",
+            "subscriberCount": 1920,
+            "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig von den Artikeln.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://flipboard.video/video-channels/dot_social",
+            "handle": "dot_social",
+            "displayName": "Flipboard Dot Social",
+            "avatarUrl": "https://flipboard.video/lazy-static/avatars/dd71a900-9f86-4508-8285-4108e86853d3.png",
+            "subscriberCount": 1847,
+            "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spotlighting leaders at the forefront of the open social web movement. Mike and his guests will explore the evolution of the internet and how new open standards, like ActivityPub, can forever change the Web and the world of social media.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://apertatube.net/video-channels/surveillancereport",
+            "handle": "surveillancereport",
+            "displayName": "Surveillance Report",
+            "avatarUrl": "https://apertatube.net/lazy-static/avatars/6ae1da04-5753-45ba-87fa-0112693742c4.png",
+            "subscriberCount": 1591,
+            "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly deep-dive into privacy, security, and digital rights news with analysis, historical context, and actionable advice.\n\n- Nate is moving on to other exciting projects in the space that he'll be announcing soon! Follow him on Mastodon for more information: https://mastodon.thenewoil.org/@thenewoil\n- Henry will continue hosting Surveillance Report under the Techlore umbrella here: https://techlore.tv/w/p/twkcDETcDauUXuaGNJnhZG?playlistPosition=1\n- Same mission, same podcast: empowering you with the information you need to stay protected.",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+            "handle": "lqdn_channel",
+            "displayName": "La Quadrature du Net",
+            "avatarUrl": "https://video.lqdn.fr/lazy-static/avatars/f530edd3-81a5-4d88-9e91-ebac1024927d.png",
+            "subscriberCount": 1585,
+            "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. ",
+            "platform": "peertube"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCXuqSBlHAE6Xw-yeJA0Tunw",
+        "title": "Linus Tech Tips",
+        "url": "https://www.youtube.com/@LinusTechTips",
+        "handle": "LinusTechTips",
+        "description": "Linus Tech Tips is a passionate team of \"professionally curious\" experts in consumer technology and video production who aim to educate and entertain.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/U_7GWetO6k4sq3pAkbFEIIWzZLKcIJlGJqNz6NQAhgqF6DVD5pllwWF6trSUWEIRn4MkhNlhy9Y=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 16800000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@LinusTechTips",
+            "handle": "LinusTechTips",
+            "displayName": "@LinusTechTips",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.6933333333333334,
+              "detail": "Name similarity: 69%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @LinusTechTips"
+            }
+          ],
+          "score": 0.6
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@linuxtechtips",
+            "handle": "linuxtechtips",
+            "displayName": "Linux Tech Tips",
+            "avatarUrl": "https://thumbs.odycdn.com/93b919ea9c95b46c675bad3aa7a27bc7.webp",
+            "description": "Giving tech tips to all GNU/Linux users.\n\nVisit zachliebl.com/linux-tech-tips for articles that accompany the videos and blog posts that don't have an associated video.\n\nSoon I will move the site to linuxtechtips.xyz.",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.7466666666666667,
+              "detail": "Name similarity: 75%"
+            }
+          ],
+          "score": 0.5226666666666666
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@liamstechtips",
+            "handle": "liamstechtips",
+            "displayName": "liams tech tips",
+            "avatarUrl": "https://thumbnails.lbry.com/UC9Fe5fqdjm-unJl6eIqbkFg",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.6933333333333334,
+              "detail": "Name similarity: 69%"
+            }
+          ],
+          "score": 0.48533333333333334
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@michuzet",
+            "handle": "michuzet",
+            "displayName": "mike's linux & tech tips",
+            "avatarUrl": "https://spee.ch/2/6a20e535e2b84de0.png",
+            "description": "I use Linux\nSometimes I'm thinking in C++\n\nYou can contact me using Signal or Jami: michuzet / da38349a0a0de910c592ec38a465e229d6c80243\n\nYou can also find me on:\nhttps://gab.com/michuzet\n\nMy other Odysee channels:\nhttps://odysee.com/@michuzet_funny\nhttps://odysee.com/@michuzet_science\nhttps://odysee.com/@michuzet_music\nhttps://odysee.com/@michuzet_archives",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.5090909090909091,
+              "detail": "Name similarity: 51%"
+            }
+          ],
+          "score": 0.3563636363636364
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@informaGTica",
+            "handle": "informaGTica",
+            "displayName": "Tech tips for GNU/Linux beginners",
+            "avatarUrl": "https://spee.ch/a/c4f9407790fac523.jpg",
+            "description": "So... having some questions on how you can do this, or make that work? Well, from an average GNU/Linux user to the rest of the world, here are some **tips and tricks** I have been learning since I started using this amazing operating system! I welcome you all to... informa**GT**ica.",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCSHZKyawUMSsndEJOqp01pQ",
+        "title": "The Linux Experiment",
+        "url": "https://www.youtube.com/@TheLinuxEXP",
+        "handle": "TheLinuxEXP",
+        "description": "Making Linux accessible: no techno babble, no super technical content. Just Linux desktop news, simple tutorials, application spotlights, and opinion pieces trying to stay positive, without gatekeeping.\nI also often reach out to the community to get feedback and poll results, so subscribe to be a part of that :)\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/GMktJ9TTrbpdxDGuT9n42QefQkWNfnCESAdYDEXEqtCfTVxuYJqLPv7GdgchI49WhvUmayQdGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 426000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@ArsenTech",
+            "handle": "ArsenTech",
+            "displayName": "ArsenTech",
+            "avatarUrl": "https://thumbs.odycdn.com/d649f522f7bd43846e8fb5064c55c268.webp",
+            "description": "Welcome to ArsenTech!\nTutorials, Malware Testing (Reviewing), Windows Experiments and Much More Quality Tech Content.\n\nI **DON’T** Accept any Future Subscriptions! This mailbox is for Subscribers, who actually subscribed to ArsenTech. \nTo Message Me, Go to my website and contact section (https://arsentech.github.io/#contact)\n\nTo get Notified When I Post a New Video, Subscribe and click the Bell icon 😉\n\n➤ About me 📋\nArsenTech (formerly known as Arsen Technologies) is a Coder (Developer, Programmer) and Tech YouTuber known as his Tutorials, Malware Testing, Windows Experiment (formerly Powerpoint OS) Videos. He is Always Working on Coding & Video Editing.\n\nMy Favorite Animal: Eagle 🦅\n\n╔══╦═╦╗╔╗╔═╦╦═╦╗\n║═╦╣║║║║║║║║║║║║\n║╔╝║║║╚╣╚╣║║║║║║\n╚╝─╚═╩═╩═╩═╩═╩═╝\n\n#ArsenTech #Malware #Windows #Linux #Software #Hardware #Coding #WindowsTests #Antivirus",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@flushyourmeds2033",
+            "handle": "flushyourmeds2033",
+            "displayName": "flushyourmeds2033",
+            "description": "–\nF2033 #flushyourmeds Scott Barry ;\nBy Scott A. Barry / Scott A Barry / Scott Barry … ;\nThis was made in Kate Text Editor, Using Linux. ;\nAlways EN YOUR Hard Drive as Linux Unified Key Setup. ;\nThen Lock Your Phone W AN ANPW and F-Droid Netguard. ;\nTwo Files one as an SRT, Another as a TXT File. ;\ndeesnuts5250@outlook.com deesnuts5250@tutanota.com ;\ndeesnuts5250@mailfence.com deesnuts5250@yahoo.com ;\nThe Rasters Below on Atoday archived as well. ;\nI-imgflip-com/96zo53-jpg Files-catbox-moe/8mqbks-jpg ;\nI-imgflip-com/977twl-jpg Files-catbox-moe/zc879d-jpg ;\n@flushyourmeds2033 Anti Zionism Anti Psychiatry … ;\nOriginally An Anti Psychiatry Movement Everywhere. ;\nSixteen Countries make it illegal to Q History. ;\nFlushyourmeds2033-wordpress-com ... ;\nFlushyourmedscom Archived to atodayorgpermacc. ;\nArchive Everything #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/rovdi1-mp4 Perma-cc/QZ3D-HWHT ;\nCommunist Books Burned #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/5uawpx-mp4 Perma-cc/SGH2-8RS6 ;\nComputer Bloatware #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/g4arab-mp4 Perma-cc/B6N3-5SZL ;\nFreemasonry is Stupid #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/7pid5j-mp4 Perma-cc/Y6GC-J7FE ;\nGang Stalking Experiment #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/q5f1fi-mp4 Perma-cc/4E92-ZX5T ;\nGang Stalking Poverty #flushyourmed #nwo #antizionism ;\nFiles-catbox-moe/auyre9-mp4 Perma-cc/VG4U-Y6DE ;\nGang Stalking Questions #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/jtlahq-mp4 Perma-cc/2KSR-7GN5 ;\nGang Stalking Resources #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/n6ajl1-mp4 Perma-cc/5N7Q-NHHK ;\nGreater Israel #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/4nwpoe-mp4 Perma-cc/EA3J-JPU6 ;\nKalergi Plan Ahead #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/eamu6g-mp4 ;\nMartians And Jews #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/6hyaxf-mp4 Perma-cc/VU8J-MUAV ;\nPrint Companies #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/dvicxn-mp4 Perma-cc/7TDB-P9P4 ;\nReading List #flushyourmeds #nwo #antizionism ;\nFiles-catbox-moe/0au848-mp4 Perma-cc/ZGW6-26FN ;\nEOF ;\n–Scott A. Barry … ;\nEOF ;\nThis is The Footer EOF of all of this ASCII Print Text. ;\nEOF ;\n-",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@gajeshsnaik",
+            "handle": "GajeshSNaik",
+            "displayName": "Gajesh S Naik",
+            "avatarUrl": "https://spee.ch/6/e540de7c2c349e2c.jpg",
+            "description": "I  am Gajesh Naik, 12 years old. Besides the curriculum, I keep an interest in Computer Science and Emerging Technologies. I have my own YouTube Channel titled \"Gajesh S. Naik\" wherein videos created by me relating to computers, Robotics, and other technology-related topics are uploaded regularly. My channel has viewership from 120+ countries across seven continents. I have learned Scratch, C, C++, Core Java, Advanced Java, HTML, CSS, JavaScript, WordPress, Python and Solidity. I have just started a hardware and networking course in IANT. \n\nI am a propounder of open source technology including the Linux operating system. At my leisure, I experiment on the Arduino Board in my own Mini Laboratory. I have a modest collection of Books relating to Computer Science and related topics. \n\nFor Business inquiry:\nrobogajesh@gmail.com",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCBJycsmduvYEL83R_U4JriQ",
+        "title": "Marques Brownlee",
+        "url": "https://www.youtube.com/@mkbhd",
+        "handle": "mkbhd",
+        "description": "MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality!\n\nbusiness@MKBHD.com\n\nNYC",
+        "avatarUrl": "https://yt3.googleusercontent.com/zi_48HwHU4s0Hnb6tZuvRzTfCPHrLEnrtIMDLzMauDEyDmURh9JZ4wrNd3lKr7m9uVnT4YjYKw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 21000000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@mkbhd",
+            "handle": "MKBHD",
+            "displayName": "@MKBHD",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @MKBHD"
+            }
+          ],
+          "score": 0.5
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@RestezConnectes",
+            "handle": "RestezConnectes",
+            "displayName": "Restez connectés",
+            "avatarUrl": "https://thumbnails.lbry.com/UCySZIa8Y4e6aSVg4CISXAOA",
+            "description": "Restez Connectés, c'est une bande de potes passionnés d'objets technologiques ! \nOn doit la naissance de cette chaine à Mathieu et Jaysen. Tous les deux ont démarré dans la rédaction d'article sur des sites comme Android et vous (un site rattaché au site Hitek),\nAndroid MT et un court passage chez Frandroid. Les deux compères ont également animé une émission de télévision baptisée Andromag sur la chaine de télévision OUATCH ! \nRestez Connectés est arrivé par l'envie de créer quelque chose qui leur appartient.\nInfluencés par de nombreux Youtubers américains comme MKBHD, Android Authority, Joshua Vergara, mais aussi Nowtech (pour la France), nous essayons de réaliser de belles vidéos. Aujourd'hui la chaine peut compter sur Julien et Sonny qui ont rejoins l'aventure, mais aussi tous les amis qui apportent leur soutien à la chaine.\n\nN'hésitez pas à vous abonner pour soutenir rester connectés :)\n\nVotre adhésion et vos partages sont la plus grande source de soutien, donc par avance merci.",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@archUserBTW",
+            "handle": "archUserBTW",
+            "displayName": "Arcy",
+            "avatarUrl": "https://spee.ch/9/04644b248d9a86cc.jpg",
+            "description": "Linux and tech enthusiast, #MKBHD for Odysee",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Putulchandra",
+            "handle": "Putulchandra",
+            "displayName": "Advertisments566",
+            "description": "\n\n\nDescription\nMKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality!\n",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@MoralNarrativeandQuotes",
+            "handle": "MoralNarrativeandQuotes",
+            "displayName": "Gadget Desk 24",
+            "avatarUrl": "https://thumbs.odycdn.com/b76b8deb0f3d5d11220dd87d425bc5c5.webp",
+            "description": "Welcome to Gadget Desk 24! Dive into the world of cutting-edge technology and smart devices with our comprehensive reviews. On this channel, we focus on gadgets review and provide in-depth analysis on the latest and coolest amazon gadgets. Whether you’re interested in cool gadgets, smart gadgets, or the latest tech reviews, we have you covered.\n\nJoin us for exciting unboxing gadget reviews as we explore new gadgets and the top gadgets has to offer. From smart home tech and home automation to innovative home assistant ideas and smart home hubs, we’re here to help you enhance your living space with the best homekit devices and smart home ideas.\n\nInspired by top tech reviewers like mkbhd, we aim to deliver high-quality content that keeps you informed and entertained. \n\nDon't miss out on our sorted collection of the best smart gadgets, home automation solutions, and must-have tech. Subscribe to Gadget Desk 24 and stay updated with the world of gadgets and tech reviews!",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UC1_uQISPCtrgJeeHdSXVuLg",
+        "title": "Fireship",
+        "url": "https://www.youtube.com/@Fireship",
+        "handle": "Fireship",
+        "description": "High-intensity ⚡ code tutorials and tech news to help you ship your app faster. New videos every week covering the topics every programmer should know. \n\nThe original home of #100SecondsOfCode #TheCodeReport and #CodeThisNotThat. Created by Jeff Delaney. \n\nWant more Fireship?\n\n🗞️ Newsletter – https://bytes.dev\n🧠 Courses – https://fireship.dev\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/B5iaLfhJJ65Gh20ZsOaXJZ6eeKCoLzoU-rtFQcYncWSs_j5SFYi5p80kChpSnX6xO54to0q4EXo=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 4210000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@fireship",
+            "handle": "fireship",
+            "displayName": "Fireship",
+            "avatarUrl": "https://thumbnails.lbry.com/UCsBjURrPoezykLs9EqgamOA",
+            "description": "High-intensity ⚡ code tutorials to help you build & ship your app faster. Subscribe for new videos every week covering intermediate to advanced lessons about JavaScript, Flutter, Firebase, and modern app development.\n\nThe original home of #100SecondsOfCode and #CodeThisNotThat. Created by Jeff Delaney. \n\nBuilding an app? Get project support, advanced full courses, and more at https://fireship.io",
+            "platform": "odysee"
+          },
+          "tier": "likely",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @fireship"
+            }
+          ],
+          "score": 0.7999999999999999
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCYO_jab_esuFRV4b17AJtAw",
+        "title": "3Blue1Brown",
+        "url": "https://www.youtube.com/@3blue1brown",
+        "handle": "3blue1brown",
+        "description": "My name is Grant Sanderson. Videos here cover a variety of topics in math, or adjacent fields like physics and CS, all with an emphasis on visualizing the core ideas. The goal is to use animation to help elucidate and motivate otherwise tricky topics, and for difficult problems to be made simple with changes in perspective.\n\nFor more information, other projects, FAQs, and inquiries see the website: https://www.3blue1brown.com",
+        "avatarUrl": "https://yt3.googleusercontent.com/JfUD9Tu79zgoYGo5-WdP5YYj0XvAjPgV3c2Snj-cgy8jslro0Ln5by024zWL7XDin7Vs-qnxVg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 8360000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@3Blue1Brown",
+            "handle": "3Blue1Brown",
+            "displayName": "3Blue1Brown",
+            "avatarUrl": "https://thumbnails.lbry.com/UCYO_jab_esuFRV4b17AJtAw",
+            "description": "3blue1brown, by Grant Sanderson, is some combination of math and entertainment, depending on your disposition. The goal is for explanations to be driven by animations and for difficult problems to be made simple with changes in perspective.\n\nContact and FAQ: https://www.3blue1brown.com/faq",
+            "platform": "odysee"
+          },
+          "tier": "likely",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @3Blue1Brown"
+            }
+          ],
+          "score": 0.7999999999999999
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@VIDEOSTRANQUILOS",
+            "handle": "VIDEOSTRANQUILOS",
+            "displayName": " 3Blue1Brown ",
+            "avatarUrl": "https://spee.ch/8/f34e605ba638a25e.jpg",
+            "description": "The math behind cryptocurrencies.",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            }
+          ],
+          "score": 0.7
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCsXVk37bltHxD1rDPwtNM8Q",
+        "title": "Kurzgesagt – In a Nutshell",
+        "url": "https://www.youtube.com/@Kurzgesagt",
+        "handle": "Kurzgesagt",
+        "description": "Animation videos explaining things with optimistic nihilism since 12,013.\n\nWe’re a team of illustrators, animators, number crunchers and one dog who aim to spark curiosity about science and the world we live in. To us nothing is boring if you tell a good story.\n\nFor updates on our videos and other news from the kurzgesagt universe follow us on Twitter, Facebook, Instagram and LinkedIn.\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/8sT9BbnbNORM5aSzSyHDFV_1ItIwaiLq4ctD4aLeMJnLiZYNCr73eN_-0Xrhy5joVL_Ewet5=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 25300000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Kurzgesagt-In-A-Nutshell",
+            "handle": "Kurzgesagt-In-A-Nutshell",
+            "displayName": "@Kurzgesagt-In-A-Nutshell",
+            "platform": "odysee"
+          },
+          "tier": "likely",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @Kurzgesagt-In-A-Nutshell"
+            }
+          ],
+          "score": 0.7999999999999999
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Kurzgesagt",
+            "handle": "Kurzgesagt",
+            "displayName": "Kurzgesagt- In A Nutshell (Mirror)",
+            "avatarUrl": "https://spee.ch/f/96bbb12582d9ce60.png",
+            "description": "Kurzgesagt content **mirror**. Their content is so awesome and educational, it needs to be mirrored forever and discoverable on LBRY.\n\nSubscribe to the actual creators on [YouTube](https://youtube.com/c/inanutshell) and fund them on [Patreon](https://www.patreon.com/Kurzgesagt) to support them directly.\n*Feel free to 'support' this to boost this in the search rankings, since you can get your credits back at any time, but try not to irreversibly 'tip' it.*\n\n***!!! REAL KURZGESAGT READ THIS !!!***\nNo LBC made from this channel will be spent, if the real Kurzgesagt wants to claim ownership, make your own LBRY channel and verify it, then comment on the channel community tab. All LBC sent in tips will be sent to you. All LBC sent in Supports will not be touched and deleting this channel will return them to their owners. I don't want to \"steal\" from your content, I just want everyone on LBRY to discover you! You don't need to DMCA this, just make your own LBRY channel and tell me :)",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.85,
+              "detail": "Name similarity: 85%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @Kurzgesagt"
+            }
+          ],
+          "score": 0.695
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@DingeErklärt-Kurzgesagt",
+            "handle": "DingeErklärt-Kurzgesagt",
+            "displayName": "Dinge Erklärt - Kurzgesagt",
+            "avatarUrl": "https://spee.ch/d/6b197603b33497db.jpg",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @DingeErklärt-Kurzgesagt"
+            }
+          ],
+          "score": 0.425
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@KurzgesagtDE",
+            "handle": "KurzgesagtDE",
+            "displayName": "Dinge Erklärt – Kurzgesagt (Mirror)",
+            "avatarUrl": "https://thumbs.odycdn.com/1cfc7d5c32bd08ed93027162bfed2dea.jpg",
+            "description": "> **Achtung! Dieser Kanal ist ein 1zu1 Mirror von \"[Dinge Erklärt – Kurzgesagt](https://www.youtube.com/c/KurzgesagtDE)\" Youtube**\n> **Warning! This Channel is a Mirror from \"[Dinge Erklärt – Kurzgesagt](https://www.youtube.com/c/KurzgesagtDE)\" Youtube**\n> \n> Eingebrachte LBRY Credits werden nicht ausgegeben und den Urhebern von Kurzgesagt bei Kontakt bereitgestellt.\nEs sind nicht alle Videos hochgeladen! Dafür bitte Youtube nutzen oder eine Anfrage an mich senden, da kann ich die  Liste updaten.\n\n----- \nBeschreibung\nDinge erklärt – Kurzgesagt ist ein Wissenschaftskanal der komplexe Themen aus Raumfahrt, Physik, Biologie, Politik, und Philosophie einfach und verständlich in animierter Form erklärt. Hier kommt ca. alle 2 -3 Wochen ein neues Video auf deutsch. \n\n--\n\nIn dem Zeitraum 28.09.2017 - 31.12.2022 gehörte dieser Kanal zu funk – Content-Netzwerk von ARD & ZDF. Inhalte, die mit dem funk-Logo gekennzeichnet sind, wurden im Auftrag von funk produziert.\n \nImpressum (28.09.2017 - 31.12.2022): https://go.funk.net/impressum",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @KurzgesagtDE"
+            }
+          ],
+          "score": 0.425
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Kurzgesagt_es",
+            "handle": "Kurzgesagt_es",
+            "displayName": "En Pocas Palabras – Kurzgesagt",
+            "description": "Videos de animación donde explicamos cosas con un punto de vista nihilista optimista desde 12 013.\nNuestro equipo, formado por ilustradores, animadores, calculadoras humanas y un perro, pretende despertar la curiosidad por la ciencia y nuestro mundo. Pensamos que, bien contado, nada es aburrido. Para saber cuándo subimos material y conocer todas las noticias del universo Kurzgesagt",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @Kurzgesagt_es"
+            }
+          ],
+          "score": 0.425
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UC6nSFpj9HTCZ5t-N3Rm3-SI",
+        "title": "Vsauce",
+        "url": "https://www.youtube.com/@Vsauce",
+        "handle": "Vsauce",
+        "description": "Our World is Amazing. \n\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/KqAxDwNOr6d1i7viCH6H0Xfx-jpeIyPmnrVfgQNrRhUiidcs4RSSMT1UIE2dPUH_gD8INmza=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 24900000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@SZBall",
+            "handle": "SZBall",
+            "displayName": "SZBall",
+            "avatarUrl": "https://thumbnails.lbry.com/UCy_RejYjK8aFnJn_l4kbd2Q",
+            "description": "A dead channel... or is it? *plays Vsauce music*",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@the_bombastic_memes",
+            "handle": "the_bombastic_memes",
+            "displayName": "the_bombastic_memes",
+            "avatarUrl": "https://thumbnails.lbry.com/UCDHaA4pGvGdCHmWSX7dh3wg",
+            "description": "Bombastic memes. 🗿 \n\n(Totally not skedaddled...or is it? -Vsauce)\n\n*[SUBSCRIBE!]*\n\nGOAL:\n                             50✅\n      17/3/2024 100✅\n                           200❎\n\n: subscribers. (For the beginning)\n\n(3-5 videos per day maybe...)\n\n[Livestream Fridays. Memes for] [hours. Join if you need a laugh!]",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCz4GouOBT3Q7qPGUAJmPsgQ",
+        "title": "ColdFusion",
+        "url": "https://www.youtube.com/@ColdFusion",
+        "handle": "ColdFusion",
+        "description": "Hi, my name is Dagogo Altraide and I create and narrate all the videos on here.\nThis channel aims to let you experience the cutting edge of the world around us in a relaxed atmosphere.\nLearn the captivating stories about how our world came to be and also learn what's happening in the cutting edge today.\n\n--- New Thinking Book written by Dagogo Altraide ---\nLearn the stories of those who invented the things we use everyday. This book is rated the 9th best technology history book of all time by Book Authority!\nAudio Book: https://goo.gl/p8auh3\nGet the book on Amazon US: http://bit.ly/NewThinkingbook\nAmazon India Link: https://goo.gl/qJCC1T\nAmazon UK link: https://goo.gl/RBxisf\nEbook on Google Play: http://bit.ly/NewThinkingGooglePlay\n\nMERCH:\n\nINTERNATIONAL: https://store.coldfusioncollective.com/\nAUSTRALIA: https://shop.coldfusioncollective.com/\n\nContact | *Business ONLY* dagogo@coldfusioncollective.com\n\nJoin the fun on instagram: \n\n@ColdFusiontv\n\nFacebook | www.facebook.com/coldfusiontv",
+        "avatarUrl": "https://yt3.googleusercontent.com/Fufi6spwo5E_ulJylpC4cwAnDUGGtBeGbJif_D8CKrCQ0tm-miKYWeueiOnRCcATjWSW9qzzKA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 5200000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Coldfusion",
+            "handle": "Coldfusion",
+            "displayName": "ColdFusion",
+            "avatarUrl": "https://thumbnails.lbry.com/UC4QZ_LsYcvcq7qOsOhpAX4A",
+            "description": "Hi, my name is Dagogo Altraide and I create and narrate all the videos on here.\nThis channel aims to let you experience the cutting edge of the world around us in a relaxed atmosphere.\nLearn the captivating stories about how our world came to be and also learn what's happening in the cutting edge today.\n\n--- New Thinking Book written by Dagogo Altraide ---\nLearn the stories of those who invented the things we use everyday. This book is rated the 9th best technology history book of all time by Book Authority!\nAudio Book: https://goo.gl/p8auh3\nGet the book on Amazon US: http://bit.ly/NewThinkingbook\nAmazon India Link: https://goo.gl/qJCC1T\nAmazon UK link: https://goo.gl/RBxisf\nEbook on Google Play: http://bit.ly/NewThinkingGooglePlay\n\nMERCH:\n\nINTERNATIONAL: https://store.coldfusioncollective.com/\nAUSTRALIA: https://shop.coldfusioncollective.com/\n\nContact | *Business ONLY* dagogo@coldfusioncollective.com\n\nJoin the fun on instagram: \n\n@ColdFusiontv\n\nFacebook | www.facebook.com/coldfusiontv",
+            "platform": "odysee"
+          },
+          "tier": "likely",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 1,
+              "detail": "Name similarity: 100%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 1,
+              "detail": "Handle match: @Coldfusion"
+            }
+          ],
+          "score": 0.7999999999999999
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@Cold",
+            "handle": "cold",
+            "displayName": "@cold",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.85,
+              "detail": "Name similarity: 85%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @cold"
+            }
+          ],
+          "score": 0.695
+        },
+        {
+          "candidate": {
+            "url": "https://odysee.com/@chessofconfusion",
+            "handle": "chessofconfusion",
+            "displayName": "Chess of Confusion",
+            "avatarUrl": "https://thumbnails.lbry.com/UCVV8tpXR4pslghyYW8SrWTw",
+            "description": "Hi there I'm Chess of confusion my passion & love is video games i have slight disability but it doesn't stop me doing what i love, games is really the only thing that I'm good at. I'm different to most Youtubers,  i don't ask for likes or subscribes I leave that in the power of the hands of the viewer. I'm 100%. Hopefully my sense of humour and style of play is for you. \n\nI have a CPU i7-2600,  GPU GTX 1050 ti,   RAM 8GB, Mic MB 800  \n\nmy upload days are Tuesday Thursday Friday & Sun",
+            "platform": "odysee"
+          },
+          "tier": "weak",
+          "signals": [],
+          "score": 0
+        }
+      ]
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCBcRF18a7Qf58cCRy5xuWwQ",
+        "title": "Jonathan Morrison",
+        "url": "https://www.youtube.com/@JonathanMorrison",
+        "handle": "JonathanMorrison",
+        "avatarUrl": "https://yt3.googleusercontent.com/ytc/AIdro_m8Kpxt2uDEDozHGJ1nuNh5N9g5IsZLbYnTOzCP4gwaEsE=s900-c-k-c0x00ffffff-no-rj",
+        "subscriberCount": 120
+      },
+      "platform": "odysee",
+      "candidates": []
+    },
+    {
+      "youtubeChannel": {
+        "id": "UCFbNvxplHOIOPe5Y2jFc1rQ",
+        "title": "TechLinked",
+        "url": "https://www.youtube.com/@TechLinked",
+        "handle": "TechLinked",
+        "description": "TechLinked keeps you up to date with a fast, funny roundup of the latest tech news every Monday, Wednesday, and Friday.\n\nSponsorship Inquiries: partnerships@linusmediagroup.com\n",
+        "avatarUrl": "https://yt3.googleusercontent.com/jBCP5QLbmjyXbw3WHUb8Kl1FTVjUxD80SOHXq_1jjq_13QQ7Y2XENRE7HHZ6HrkKxISBafi-Dg=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+        "subscriberCount": 1990000
+      },
+      "platform": "odysee",
+      "candidates": [
+        {
+          "candidate": {
+            "url": "https://odysee.com/@TechLink",
+            "handle": "TechLink",
+            "displayName": "TechLink",
+            "avatarUrl": "https://thumbnails.lbry.com/UCwX-YWMMykGoRpyO8k-lbLQ",
+            "description": "Thanks for stopping by! \nThe purpose of this channel is to provide how-to knowledge and reviews for popular technology that are straightforward and easy for anyone to follow. Popular subjects for my videos include IOS,  Apple, speakers, android, windows mobile.\n\nI hope you find something here that helps you out.\n\nI do this as a hobby in my free time. If you enjoyed any of my videos and would like to buy me a pint as a sign of appreciation, that would be great!\nhttps://www.buymeacoffee.com/TechLink\n\nAll the best,\n\nPaul",
+            "platform": "odysee"
+          },
+          "tier": "possible",
+          "signals": [
+            {
+              "type": "name_match",
+              "strength": 0.85,
+              "detail": "Name similarity: 85%"
+            },
+            {
+              "type": "handle_match",
+              "strength": 0.85,
+              "detail": "Handle match: @TechLink"
+            }
+          ],
+          "score": 0.695
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "totalChannels": 10,
+    "enriched": 9,
+    "enrichmentFailed": 1,
+    "declaredLinksFound": 53,
+    "verifiedMatches": 1,
+    "likelyMatches": 4,
+    "possibleMatches": 4,
+    "weakMatches": 10
+  }
+}

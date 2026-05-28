@@ -1,0 +1,83 @@
+{
+  "test1": {
+    "requestCount": 10,
+    "maxConcurrentObserved": 1,
+    "allSucceeded": true,
+    "totalMs": 18547,
+    "timing": [
+      {
+        "url": "https://httpbin.org/anything?q=test0",
+        "relativeStartMs": 0,
+        "durationMs": 252,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test1",
+        "relativeStartMs": 0,
+        "durationMs": 2065,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test2",
+        "relativeStartMs": 0,
+        "durationMs": 4070,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test3",
+        "relativeStartMs": 0,
+        "durationMs": 6070,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test4",
+        "relativeStartMs": 0,
+        "durationMs": 8068,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test5",
+        "relativeStartMs": 0,
+        "durationMs": 10131,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test6",
+        "relativeStartMs": 0,
+        "durationMs": 12074,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test7",
+        "relativeStartMs": 0,
+        "durationMs": 14075,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test8",
+        "relativeStartMs": 0,
+        "durationMs": 16075,
+        "cached": false
+      },
+      {
+        "url": "https://httpbin.org/anything?q=test9",
+        "relativeStartMs": 0,
+        "durationMs": 18547,
+        "cached": false
+      }
+    ]
+  },
+  "test2": {
+    "allCacheHits": true,
+    "totalMs": 0,
+    "cacheStats": {
+      "size": 10,
+      "hits": 10,
+      "misses": 10
+    }
+  },
+  "test3": {
+    "fifoOrdering": true
+  },
+  "overall": true
+}

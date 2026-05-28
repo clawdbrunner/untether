@@ -1,0 +1,301 @@
+[
+  {
+    "query": "Linus Tech Tips",
+    "endpoint": "https://search.joinpeertube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 10000,
+    "topResults": [
+      {
+        "displayName": "The Linux Experiment",
+        "name": "thelinuxexperiment_channel",
+        "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+        "host": "tilvids.com",
+        "followersCount": 4230,
+        "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and "
+      },
+      {
+        "displayName": "c’t 3003",
+        "name": "ct_3003",
+        "url": "https://peertube.heise.de/video-channels/ct_3003",
+        "host": "peertube.heise.de",
+        "followersCount": 1920,
+        "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig v"
+      },
+      {
+        "displayName": "Flipboard Dot Social",
+        "name": "dot_social",
+        "url": "https://flipboard.video/video-channels/dot_social",
+        "host": "flipboard.video",
+        "followersCount": 1847,
+        "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spot"
+      },
+      {
+        "displayName": "Surveillance Report",
+        "name": "surveillancereport",
+        "url": "https://apertatube.net/video-channels/surveillancereport",
+        "host": "apertatube.net",
+        "followersCount": 1591,
+        "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly de"
+      },
+      {
+        "displayName": "La Quadrature du Net",
+        "name": "lqdn_channel",
+        "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+        "host": "video.lqdn.fr",
+        "followersCount": 1585,
+        "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. "
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 751
+  },
+  {
+    "query": "The Linux Experiment",
+    "endpoint": "https://search.joinpeertube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 10000,
+    "topResults": [
+      {
+        "displayName": "The Linux Experiment",
+        "name": "thelinuxexperiment_channel",
+        "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+        "host": "tilvids.com",
+        "followersCount": 4230,
+        "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and "
+      },
+      {
+        "displayName": "c’t 3003",
+        "name": "ct_3003",
+        "url": "https://peertube.heise.de/video-channels/ct_3003",
+        "host": "peertube.heise.de",
+        "followersCount": 1920,
+        "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig v"
+      },
+      {
+        "displayName": "Flipboard Dot Social",
+        "name": "dot_social",
+        "url": "https://flipboard.video/video-channels/dot_social",
+        "host": "flipboard.video",
+        "followersCount": 1847,
+        "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spot"
+      },
+      {
+        "displayName": "Surveillance Report",
+        "name": "surveillancereport",
+        "url": "https://apertatube.net/video-channels/surveillancereport",
+        "host": "apertatube.net",
+        "followersCount": 1591,
+        "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly de"
+      },
+      {
+        "displayName": "La Quadrature du Net",
+        "name": "lqdn_channel",
+        "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+        "host": "video.lqdn.fr",
+        "followersCount": 1585,
+        "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. "
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 748
+  },
+  {
+    "query": "Marques Brownlee",
+    "endpoint": "https://search.joinpeertube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 10000,
+    "topResults": [
+      {
+        "displayName": "The Linux Experiment",
+        "name": "thelinuxexperiment_channel",
+        "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+        "host": "tilvids.com",
+        "followersCount": 4230,
+        "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and "
+      },
+      {
+        "displayName": "c’t 3003",
+        "name": "ct_3003",
+        "url": "https://peertube.heise.de/video-channels/ct_3003",
+        "host": "peertube.heise.de",
+        "followersCount": 1920,
+        "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig v"
+      },
+      {
+        "displayName": "Flipboard Dot Social",
+        "name": "dot_social",
+        "url": "https://flipboard.video/video-channels/dot_social",
+        "host": "flipboard.video",
+        "followersCount": 1847,
+        "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spot"
+      },
+      {
+        "displayName": "Surveillance Report",
+        "name": "surveillancereport",
+        "url": "https://apertatube.net/video-channels/surveillancereport",
+        "host": "apertatube.net",
+        "followersCount": 1591,
+        "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly de"
+      },
+      {
+        "displayName": "La Quadrature du Net",
+        "name": "lqdn_channel",
+        "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+        "host": "video.lqdn.fr",
+        "followersCount": 1585,
+        "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. "
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 185
+  },
+  {
+    "query": "Veritasium",
+    "endpoint": "https://search.joinpeertube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 10000,
+    "topResults": [
+      {
+        "displayName": "The Linux Experiment",
+        "name": "thelinuxexperiment_channel",
+        "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+        "host": "tilvids.com",
+        "followersCount": 4230,
+        "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and "
+      },
+      {
+        "displayName": "c’t 3003",
+        "name": "ct_3003",
+        "url": "https://peertube.heise.de/video-channels/ct_3003",
+        "host": "peertube.heise.de",
+        "followersCount": 1920,
+        "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig v"
+      },
+      {
+        "displayName": "Flipboard Dot Social",
+        "name": "dot_social",
+        "url": "https://flipboard.video/video-channels/dot_social",
+        "host": "flipboard.video",
+        "followersCount": 1847,
+        "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spot"
+      },
+      {
+        "displayName": "Surveillance Report",
+        "name": "surveillancereport",
+        "url": "https://apertatube.net/video-channels/surveillancereport",
+        "host": "apertatube.net",
+        "followersCount": 1591,
+        "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly de"
+      },
+      {
+        "displayName": "La Quadrature du Net",
+        "name": "lqdn_channel",
+        "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+        "host": "video.lqdn.fr",
+        "followersCount": 1585,
+        "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. "
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 185
+  },
+  {
+    "query": "Fireship",
+    "endpoint": "https://search.joinpeertube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 10000,
+    "topResults": [
+      {
+        "displayName": "The Linux Experiment",
+        "name": "thelinuxexperiment_channel",
+        "url": "https://tilvids.com/video-channels/thelinuxexperiment_channel",
+        "host": "tilvids.com",
+        "followersCount": 4230,
+        "description": "I'm Nick, and I like to tinker with Linux stuff. I'll bumble through distro reviews, tutorials, and "
+      },
+      {
+        "displayName": "c’t 3003",
+        "name": "ct_3003",
+        "url": "https://peertube.heise.de/video-channels/ct_3003",
+        "host": "peertube.heise.de",
+        "followersCount": 1920,
+        "description": "Direkt von Europas größtem IT & Tech-Magazin. Die Videos sind eigenständige Inhalte und unabhängig v"
+      },
+      {
+        "displayName": "Flipboard Dot Social",
+        "name": "dot_social",
+        "url": "https://flipboard.video/video-channels/dot_social",
+        "host": "flipboard.video",
+        "followersCount": 1847,
+        "description": "Hosted by Flipboard co-founder and CEO Mike McCue, Dot Social is a new podcast and video series spot"
+      },
+      {
+        "displayName": "Surveillance Report",
+        "name": "surveillancereport",
+        "url": "https://apertatube.net/video-channels/surveillancereport",
+        "host": "apertatube.net",
+        "followersCount": 1591,
+        "description": "Surveillance Report has evolved and is now continuing as Techlore Surveillance Report—your weekly de"
+      },
+      {
+        "displayName": "La Quadrature du Net",
+        "name": "lqdn_channel",
+        "url": "https://video.lqdn.fr/video-channels/lqdn_channel",
+        "host": "video.lqdn.fr",
+        "followersCount": 1585,
+        "description": "La Quadrature du Net est une association de défense des libertés à l'ère numérique. "
+      }
+    ],
+    "rateLimitHeaders": {},
+    "responseTimeMs": 185
+  },
+  {
+    "query": "Linus Tech Tips",
+    "endpoint": "https://framatube.org/api/v1/search/video-channels",
+    "status": "SUCCESS",
+    "total": 1860,
+    "topResults": [
+      {
+        "displayName": "Default root channel",
+        "name": "0ac5f097-91a4-445d-8e9b-55d3b77839a7",
+        "url": "https://framatube.org/video-channels/0ac5f097-91a4-445d-8e9b-55d3b77839a7",
+        "host": "framatube.org",
+        "followersCount": 0
+      },
+      {
+        "displayName": "Les vidéos de Framasoft",
+        "name": "bf54d359-cfad-4935-9d45-9d6be93f63e8",
+        "url": "https://framatube.org/video-channels/bf54d359-cfad-4935-9d45-9d6be93f63e8",
+        "host": "framatube.org",
+        "followersCount": 180
+      },
+      {
+        "displayName": "Default datagueule channel",
+        "name": "c2fbac48-b069-42dd-b24c-7969c14a1374",
+        "url": "https://peertube.datagueule.tv/video-channels/c2fbac48-b069-42dd-b24c-7969c14a1374",
+        "host": "peertube.datagueule.tv",
+        "followersCount": 324
+      },
+      {
+        "displayName": "merci de ne pas s'abonner",
+        "name": "9545c5f2-edc2-44cc-8c70-11ecbf9434f3",
+        "url": "https://video.lqdn.fr/video-channels/9545c5f2-edc2-44cc-8c70-11ecbf9434f3",
+        "host": "video.lqdn.fr",
+        "followersCount": 15
+      },
+      {
+        "displayName": "Default romain_osons channel",
+        "name": "81bd4940-22ac-4a8d-bfa0-88168d79685c",
+        "url": "https://video.colibris-outilslibres.org/video-channels/81bd4940-22ac-4a8d-bfa0-88168d79685c",
+        "host": "video.colibris-outilslibres.org",
+        "followersCount": 0
+      }
+    ],
+    "rateLimitHeaders": {
+      "x-ratelimit-limit": "500",
+      "x-ratelimit-remaining": "499",
+      "x-ratelimit-reset": "1779989181"
+    },
+    "responseTimeMs": 1446
+  }
+]

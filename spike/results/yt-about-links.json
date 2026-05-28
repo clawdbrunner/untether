@@ -1,0 +1,65 @@
+[
+  {
+    "channel": "@LinusTechTips",
+    "status": "SUCCESS",
+    "links": [
+      {
+        "title": "lttstore.com",
+        "url": "https://www.lttstore.com/"
+      },
+      {
+        "title": "Floatplane",
+        "url": "https://www.floatplane.com/ltt"
+      },
+      {
+        "title": "Labs",
+        "url": "https://www.lttlabs.com/"
+      },
+      {
+        "title": "Twitter",
+        "url": "https://twitter.com/LinusTech"
+      },
+      {
+        "title": "Facebook",
+        "url": "https://www.facebook.com/LinusTech/"
+      },
+      {
+        "title": "TikTok",
+        "url": "www.tiktok.com/@linustech"
+      },
+      {
+        "title": "Instagram",
+        "url": "https://www.instagram.com/linustech/"
+      }
+    ],
+    "formalAltPlatformLinks": [
+      {
+        "title": "Floatplane",
+        "url": "https://www.floatplane.com/ltt"
+      }
+    ]
+  },
+  {
+    "channel": "@pocketverything",
+    "status": "BLOCKED",
+    "links": [],
+    "formalAltPlatformLinks": [],
+    "error": "No ytInitialData in response (likely bot detection)",
+    "rawHtmlSnippet": "<html lang=\"en\" dir=\"ltr\"><head><title>404 Not Found</title><style nonce=\"RA90FpCbFYizsVompr8l1A\">*{margin:0;padding:0;border:0}html,body{height:100%;}</style><link rel=\"shortcut icon\" href=\"https://www.youtube.com/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"icon\" href=\"https://www.youtube.com/img/favicon_32.png\" sizes=\"32x32\"><link rel=\"icon\" href=\"https://www.youtube.com/img/favicon_48.png\" sizes=\"48x48\"><link rel=\"icon\" href=\"https://www.youtube.com/img/favicon_96.png\" sizes=\"96x96\"><link"
+  },
+  {
+    "channel": "@TheLinuxEXP",
+    "status": "SUCCESS",
+    "links": [
+      {
+        "title": "Support me on Patreon",
+        "url": "https://www.patreon.com/thelinuxexperiment"
+      },
+      {
+        "title": "Follow me on Mastodon",
+        "url": "https://mastodon.social/@thelinuxEXP"
+      }
+    ],
+    "formalAltPlatformLinks": []
+  }
+]
