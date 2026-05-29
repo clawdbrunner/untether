@@ -63,6 +63,41 @@ export interface ProgressEvent {
   message: string;
 }
 
+// === Job State (§9.5) ===
+
+export type JobStatus = 'pending' | 'running' | 'paused' | 'completed' | 'failed';
+export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed';
+export type TaskKind = 'enrich' | 'scrape_links' | 'search:peertube' | 'search:odysee';
+
+export interface Job {
+  id: string;
+  createdAt: number;
+  status: JobStatus;
+  options: PipelineConfig;
+  channelIds: string[];
+  progress: { completed: number; total: number };
+}
+
+export interface Task {
+  id: string;
+  jobId: string;
+  kind: TaskKind;
+  targetKey: string;  // channel ID for enrich/scrape_links, "channelId:platform" for search
+  status: TaskStatus;
+  attempts: number;
+  maxAttempts: number;
+  lastError?: string;
+  result?: unknown;
+}
+
+export interface Selection {
+  jobId: string;
+  channelId: string;
+  platform: string;
+  chosenUrl: string;
+  tier: ConfidenceTier;
+}
+
 export interface PipelineResult {
   channels: YouTubeChannel[];
   matches: MatchResult[];

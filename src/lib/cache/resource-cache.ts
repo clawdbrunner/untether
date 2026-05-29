@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { createHash } from 'crypto';
 import type { YouTubeChannel, DeclaredLink, ChannelCandidate } from '../types.js';
 
@@ -72,6 +72,31 @@ export class ResourceCache {
   async setAvatarHash(url: string, hash: string): Promise<void> {
     const key = this.hashKey(url);
     this.write(join('avatars', `${key}.json`), hash);
+  }
+
+  // --- Sync helpers for orchestrator ---
+
+  /**
+   * Synchronous read — for internal use by orchestrator.
+   */
+  readSync<T>(relPath: string): T | null {
+    const fullPath = join(this.baseDir, relPath + '.json');
+    if (!existsSync(fullPath)) return null;
+    try {
+      const raw = readFileSync(fullPath, 'utf-8');
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Synchronous write — for internal use by orchestrator.
+   */
+  writeSync<T>(relPath: string, data: T): void {
+    const fullPath = join(this.baseDir, relPath + '.json');
+    mkdirSync(dirname(fullPath), { recursive: true });
+    writeFileSync(fullPath, JSON.stringify(data));
   }
 
   // --- Internal helpers ---

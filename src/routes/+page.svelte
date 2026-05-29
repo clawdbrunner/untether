@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PipelineResult, ProgressEvent, ConfidenceTier } from '$lib/types';
+	import type { PipelineResult, ProgressEvent, ConfidenceTier, Job, JobStatus } from '$lib/types';
 	import UploadStep from '$lib/components/UploadStep.svelte';
 	import ProgressTracker from '$lib/components/ProgressTracker.svelte';
 	import ResultsGrid from '$lib/components/ResultsGrid.svelte';
@@ -11,6 +11,8 @@
 	let pipelineResult = $state<PipelineResult | null>(null);
 	let progressEvents = $state<ProgressEvent[]>([]);
 	let pipelineError = $state<string | undefined>();
+	let currentJobId = $state<string | undefined>();
+	let jobStatus = $state<JobStatus | undefined>();
 
 	// channelId → platform → url
 	let selections = $state(new Map<string, Map<string, string>>());
@@ -24,29 +26,98 @@
 		weak: 1
 	};
 
+	let pollInterval: ReturnType<typeof setInterval> | undefined;
+
 	async function handleStart(csv: string, platforms: ('peertube' | 'odysee')[], apiKey?: string) {
 		step = 'running';
 		progressEvents = [];
 		pipelineError = undefined;
+		selections = new Map();
+		selectedIndices = new Map();
 
 		try {
-			const res = await fetch('/api/pipeline', {
+			// Create job via API
+			const res = await fetch('/api/jobs', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ csv, platforms, apiKey })
 			});
 
 			const data = await res.json();
-
 			if (!res.ok) {
-				pipelineError = data.error || 'Pipeline failed';
+				pipelineError = data.error || 'Failed to create job';
 				return;
 			}
 
+			currentJobId = data.jobId;
+			jobStatus = 'running';
+
+			progressEvents.push({
+				phase: 'ingest',
+				current: 0,
+				total: 0,
+				message: 'Job created, processing...'
+			});
+
+			// Poll for job status
+			pollInterval = setInterval(pollJobStatus, 2000);
+		} catch (err) {
+			pipelineError = err instanceof Error ? err.message : 'Network error';
+		}
+	}
+
+	async function pollJobStatus() {
+		if (!currentJobId) return;
+
+		try {
+			const res = await fetch(`/api/jobs/${currentJobId}`);
+			const data = await res.json();
+
+			if (!res.ok) {
+				clearInterval(pollInterval);
+				pollInterval = undefined;
+				pipelineError = data.error || 'Job failed';
+				return;
+			}
+
+			const job: Job = data.job;
+			jobStatus = job.status;
+
+			// Update progress
+			progressEvents = [{
+				phase: 'match',
+				current: job.progress.completed,
+				total: job.progress.total,
+				message: `Processing: ${job.progress.completed}/${job.progress.total} tasks complete`
+			}];
+
+			if (job.status === 'completed') {
+				clearInterval(pollInterval);
+				pollInterval = undefined;
+				await loadResults();
+			} else if (job.status === 'failed') {
+				clearInterval(pollInterval);
+				pollInterval = undefined;
+				pipelineError = 'Job failed';
+			} else if (job.status === 'paused') {
+				clearInterval(pollInterval);
+				pollInterval = undefined;
+				pipelineError = 'Job paused';
+			}
+		} catch {
+			// Network error — keep polling
+		}
+	}
+
+	async function loadResults() {
+		if (!currentJobId) return;
+
+		const res = await fetch(`/api/jobs/${currentJobId}/results`);
+		const data = await res.json();
+
+		if (res.ok) {
 			pipelineResult = data.result;
-			progressEvents = data.progress || [];
-			selections = new Map();
-			selectedIndices = new Map();
+			step = 'results';
 
 			// Auto-accept verified matches
 			if (pipelineResult) {
@@ -57,11 +128,22 @@
 					}
 				}
 			}
-
-			step = 'results';
-		} catch (err) {
-			pipelineError = err instanceof Error ? err.message : 'Network error';
+		} else {
+			pipelineError = data.error || 'Failed to load results';
 		}
+	}
+
+	async function handlePause() {
+		if (!currentJobId) return;
+		await fetch(`/api/jobs/${currentJobId}/pause`, { method: 'POST' });
+		jobStatus = 'paused';
+	}
+
+	async function handleResume() {
+		if (!currentJobId) return;
+		await fetch(`/api/jobs/${currentJobId}/resume`, { method: 'POST' });
+		jobStatus = 'running';
+		pollInterval = setInterval(pollJobStatus, 2000);
 	}
 
 	function acceptMatch(channelId: string, platform: string) {
@@ -79,15 +161,26 @@
 		channelMap.set(platform, candidate.candidate.url);
 		selections.set(channelId, channelMap);
 		selections = new Map(selections);
+
+		// Persist to server
+		if (currentJobId) {
+			fetch(`/api/jobs/${currentJobId}/selections`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					channelId, platform,
+					url: candidate.candidate.url,
+					tier: candidate.tier,
+				}),
+			});
+		}
 	}
 
 	function skipMatch(channelId: string, platform: string) {
 		const channelMap = selections.get(channelId);
 		if (channelMap) {
 			channelMap.delete(platform);
-			if (channelMap.size === 0) {
-				selections.delete(channelId);
-			}
+			if (channelMap.size === 0) selections.delete(channelId);
 			selections = new Map(selections);
 		}
 	}
@@ -98,7 +191,6 @@
 		selectedIndices.set(channelId, channelMap);
 		selectedIndices = new Map(selectedIndices);
 
-		// If already accepted, update the URL
 		if (selections.get(channelId)?.has(platform)) {
 			acceptMatch(channelId, platform);
 		}
@@ -109,10 +201,13 @@
 
 		if (action === 'clear') {
 			selections = new Map();
+			if (currentJobId) {
+				fetch(`/api/jobs/${currentJobId}/selections`, { method: 'DELETE' });
+			}
 			return;
 		}
 
-		const minTier = action === 'accept-verified' ? 4 : 3; // verified=4, likely=3
+		const minTier = action === 'accept-verified' ? 4 : 3;
 
 		for (const match of pipelineResult.matches) {
 			const idx = selectedIndices.get(match.youtubeChannel.id)?.get(match.platform) ?? 0;
@@ -125,10 +220,16 @@
 	}
 
 	function resetToUpload() {
+		if (pollInterval) {
+			clearInterval(pollInterval);
+			pollInterval = undefined;
+		}
 		step = 'upload';
 		pipelineResult = null;
 		progressEvents = [];
 		pipelineError = undefined;
+		currentJobId = undefined;
+		jobStatus = undefined;
 		selections = new Map();
 		selectedIndices = new Map();
 	}
@@ -147,9 +248,16 @@
 		<div class="step-container progress-container">
 			<h1 class="running-title">Finding your creators...</h1>
 			<ProgressTracker events={progressEvents} error={pipelineError} />
-			{#if pipelineError}
-				<button class="retry-btn" onclick={resetToUpload}>Try again</button>
-			{/if}
+			<div class="running-controls">
+				{#if jobStatus === 'running'}
+					<button class="pause-btn" onclick={handlePause}>⏸ Pause</button>
+				{:else if jobStatus === 'paused'}
+					<button class="resume-btn" onclick={handleResume}>▶ Resume</button>
+				{/if}
+				{#if pipelineError}
+					<button class="retry-btn" onclick={resetToUpload}>Try again</button>
+				{/if}
+			</div>
 		</div>
 	{:else if step === 'results' && pipelineResult}
 		<div class="results-container">
@@ -196,7 +304,7 @@
 	}
 
 	.progress-container {
-		gap: 32px;
+		gap: 24px;
 		text-align: center;
 	}
 
@@ -207,7 +315,13 @@
 		margin: 0;
 	}
 
-	.retry-btn {
+	.running-controls {
+		display: flex;
+		gap: 12px;
+		justify-content: center;
+	}
+
+	.pause-btn, .resume-btn, .retry-btn {
 		padding: 10px 24px;
 		background: var(--bg-card);
 		border: 1px solid var(--border);
@@ -216,9 +330,10 @@
 		font-size: 0.9rem;
 		font-weight: 600;
 		cursor: pointer;
+		transition: all 0.15s;
 	}
 
-	.retry-btn:hover {
+	.pause-btn:hover, .resume-btn:hover, .retry-btn:hover {
 		background: var(--bg-hover);
 	}
 
