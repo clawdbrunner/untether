@@ -141,9 +141,36 @@ export class Orchestrator {
   async resumeJob(jobId: string): Promise<void> {
     const job = await this.store.getJob(jobId);
     if (!job) throw new Error(`Job ${jobId} not found`);
-    if (job.status !== 'paused') throw new Error(`Job ${jobId} is not paused (status: ${job.status})`);
+    if (job.status !== 'paused' && job.status !== 'failed') {
+      throw new Error(`Job ${jobId} cannot be resumed (status: ${job.status})`);
+    }
 
     await this.startJob(jobId);
+  }
+
+  /**
+   * Recover from a crash. Resets orphaned running tasks and jobs.
+   * Call once on application startup.
+   */
+  async recover(): Promise<{ tasksReset: number; jobsReset: number }> {
+    // Reset orphaned running tasks back to pending
+    const tasksReset = await this.store.resetOrphanedTasks();
+
+    // Reset jobs that were running (they can be resumed)
+    let jobsReset = 0;
+    const runningJobs = await this.store.listJobs('running');
+    for (const job of runningJobs) {
+      await this.store.updateJobStatus(job.id, 'paused');
+      jobsReset++;
+    }
+
+    if (tasksReset > 0 || jobsReset > 0) {
+      process.stderr.write(
+        `[orchestrator] Recovery: reset ${tasksReset} orphaned tasks, ${jobsReset} running jobs → paused\n`
+      );
+    }
+
+    return { tasksReset, jobsReset };
   }
 
   /**

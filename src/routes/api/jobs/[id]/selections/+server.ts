@@ -5,7 +5,7 @@ import type { ConfidenceTier } from '$lib/types';
 
 // GET — retrieve current selections
 export const GET: RequestHandler = async ({ params }) => {
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
   const selections = await orchestrator.store.getSelections(params.id);
   return json({ selections });
 };
@@ -24,14 +24,14 @@ export const POST: RequestHandler = async ({ params, request }) => {
     return json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
   await orchestrator.store.setSelection(params.id, channelId, platform, url, tier);
   return json({ ok: true });
 };
 
 // DELETE — clear all selections
 export const DELETE: RequestHandler = async ({ params }) => {
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
   await orchestrator.store.clearSelections(params.id);
   return json({ ok: true });
 };

@@ -48,5 +48,5 @@ export interface TaskQueue {
   dequeue(limit: number): Promise<Task[]>;
   complete(taskId: string, result: unknown): Promise<void>;
   fail(taskId: string, error: string): Promise<void>;
-  pendingCount(): number;
+  pendingCount(): Promise<number>;
 }

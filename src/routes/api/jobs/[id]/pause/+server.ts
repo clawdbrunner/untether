@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { getOrchestrator } from '$lib/server/orchestrator.js';
 
 export const POST: RequestHandler = async ({ params }) => {
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
 
   try {
     await orchestrator.pauseJob(params.id);

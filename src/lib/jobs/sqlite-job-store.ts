@@ -182,6 +182,19 @@ export class SqliteJobStore implements JobStore {
     this.db.prepare('DELETE FROM selections WHERE job_id = ?').run(jobId);
   }
 
+  // --- Recovery ---
+
+  /**
+   * Reset all tasks with status 'running' back to 'pending'.
+   * Call on startup to recover from crashes.
+   */
+  async resetOrphanedTasks(): Promise<number> {
+    const result = this.db.prepare(
+      "UPDATE tasks SET status = 'pending' WHERE status = 'running'"
+    ).run();
+    return result.changes;
+  }
+
   // --- Cleanup ---
 
   async deleteJobsOlderThan(maxAge: number): Promise<number> {

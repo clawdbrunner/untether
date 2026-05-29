@@ -22,9 +22,8 @@ export class SqliteTaskQueue implements TaskQueue {
     await this.store.updateTaskStatus(taskId, 'failed', undefined, error);
   }
 
-  pendingCount(): number {
-    // Synchronous — delegates to store which uses sync SQLite under async wrapper
-    // For accurate count, use dequeue().length or call store directly
-    return 0;
+  async pendingCount(): Promise<number> {
+    const tasks = await this.store.getNextPendingTasks(this.jobId, 9999);
+    return tasks.length;
   }
 }

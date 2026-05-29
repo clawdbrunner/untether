@@ -5,9 +5,13 @@ import { RateLimiter } from '$lib/rate-limit/rate-limiter.js';
 import { join } from 'path';
 
 let _orchestrator: Orchestrator | null = null;
+let _initPromise: Promise<Orchestrator> | null = null;
 
-export function getOrchestrator(): Orchestrator {
-  if (!_orchestrator) {
+export async function getOrchestrator(): Promise<Orchestrator> {
+  if (_orchestrator) return _orchestrator;
+  if (_initPromise) return _initPromise;
+
+  _initPromise = (async () => {
     const store = new SqliteJobStore(
       join(process.cwd(), '.cache', 'untether', 'jobs.db')
     );
@@ -15,7 +19,14 @@ export function getOrchestrator(): Orchestrator {
       join(process.cwd(), '.cache', 'untether')
     );
     const limiter = new RateLimiter();
-    _orchestrator = new Orchestrator(store, cache, limiter);
-  }
-  return _orchestrator;
+    const orch = new Orchestrator(store, cache, limiter);
+
+    // Run crash recovery on startup
+    await orch.recover();
+
+    _orchestrator = orch;
+    return orch;
+  })();
+
+  return _initPromise;
 }

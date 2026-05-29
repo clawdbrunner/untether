@@ -6,7 +6,7 @@ export const POST: RequestHandler = async ({ params, request }) => {
   const body = await request.json();
   const { format } = body as { format: 'txt' | 'newpipe' | 'csv' };
 
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
   const result = await orchestrator.getJobResults(params.id);
   if (!result) {
     return json({ error: 'Job not found' }, { status: 404 });

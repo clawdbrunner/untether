@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
     return json({ error: 'Missing csv or platforms' }, { status: 400 });
   }
 
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
 
   const job = await orchestrator.createJob(csv, {
     youtubeApiKey: apiKey,
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 // GET /api/jobs — List all jobs
 export const GET: RequestHandler = async () => {
-  const orchestrator = getOrchestrator();
+  const orchestrator = await getOrchestrator();
   const jobs = await orchestrator.store.listJobs();
   return json({ jobs });
 };
