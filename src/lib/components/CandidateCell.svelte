@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ScoredCandidate, ConfidenceTier } from '$lib/types';
 	import TierBadge from './TierBadge.svelte';
+	import AvatarCompare from './AvatarCompare.svelte';
 
 	let {
 		candidates,
@@ -53,10 +54,15 @@
 		<div class="cell-main">
 			<div class="cell-header">
 				<div class="avatars">
-					{#if top.candidate.avatarUrl}
-						<img src={top.candidate.avatarUrl} alt="" class="avatar" />
-					{:else}
-						<div class="avatar placeholder"></div>
+					<AvatarCompare
+						youtubeUrl={youtubeAvatarUrl}
+						candidateUrl={top.candidate.avatarUrl}
+						channelName={channelName}
+					/>
+					{#if top.signals.find(s => s.type === 'avatar_hash')}
+						<span class="avatar-signal">
+							👤 {Math.round(top.signals.find(s => s.type === 'avatar_hash')!.strength * 100)}%
+						</span>
 					{/if}
 				</div>
 				<div class="info">
@@ -83,7 +89,12 @@
 			{#if top.signals.length > 0}
 				<div class="signals">
 					{#each top.signals as signal}
-						<span class="signal-pill">{signalLabels[signal.type] ?? signal.type}</span>
+						<span
+							class="signal-pill"
+							class:avatar-signal-pill={signal.type === 'avatar_hash'}
+						>
+							{signalLabels[signal.type] ?? signal.type}
+						</span>
 					{/each}
 				</div>
 			{/if}
@@ -170,19 +181,6 @@
 		margin-bottom: 8px;
 	}
 
-	.avatar {
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 2px solid var(--border);
-		flex-shrink: 0;
-	}
-
-	.placeholder {
-		background: var(--bg-secondary);
-	}
-
 	.info {
 		min-width: 0;
 		flex: 1;
@@ -253,6 +251,13 @@
 		margin-bottom: 8px;
 	}
 
+	.avatar-signal {
+		font-size: 0.65rem;
+		font-weight: 600;
+		color: var(--accent);
+		white-space: nowrap;
+	}
+
 	.signal-pill {
 		padding: 1px 6px;
 		border-radius: 3px;
@@ -261,6 +266,11 @@
 		background: var(--bg-hover);
 		color: var(--text-secondary);
 		white-space: nowrap;
+	}
+
+	.signal-pill.avatar-signal-pill {
+		background: color-mix(in srgb, var(--accent) 20%, var(--bg-hover));
+		color: var(--accent);
 	}
 
 	.signal-pill.small {

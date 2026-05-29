@@ -25,18 +25,21 @@ export async function enrichChannels(
 
   // 2. If API key provided, use batch API enrichment
   if (config.youtubeApiKey) {
-    const release = await limiter.acquire('youtube-api');
-    try {
-      const apiResults = await batchEnrichChannels(needsEnrichment, config.youtubeApiKey);
-      for (const ch of needsEnrichment) {
-        const data = apiResults.get(ch.id);
-        if (data) {
-          applyEnrichment(ch, data);
-          await cache.setEnrichment(ch.id, data);
+    for (let i = 0; i < needsEnrichment.length; i += 50) {
+      const batch = needsEnrichment.slice(i, i + 50);
+      const release = await limiter.acquire('youtube-api');
+      try {
+        const apiResults = await batchEnrichChannels(batch, config.youtubeApiKey);
+        for (const ch of batch) {
+          const data = apiResults.get(ch.id);
+          if (data) {
+            applyEnrichment(ch, data);
+            await cache.setEnrichment(ch.id, data);
+          }
         }
+      } finally {
+        release();
       }
-    } finally {
-      release();
     }
   }
 
