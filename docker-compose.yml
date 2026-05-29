@@ -1,0 +1,13 @@
+services:
+  untether:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - untether-cache:/app/.cache/untether
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+volumes:
+  untether-cache:
