@@ -29,6 +29,11 @@
 	let hasCandidate = $derived(candidates.length > 0 && top != null);
 	let scorePercent = $derived(hasCandidate ? Math.round(top.score * 100) : 0);
 
+	const platformLabels: Record<string, { name: string; color: string }> = {
+		peertube: { name: 'PeerTube', color: '#f2690d' },
+		odysee: { name: 'Odysee', color: '#ef0060' },
+	};
+
 	const signalLabels: Record<string, string> = {
 		declared_link: 'link',
 		back_reference: 'back-ref',
@@ -69,9 +74,20 @@
 					<div class="name-row">
 						<TierBadge tier={top.tier} />
 						<span class="candidate-name">{top.candidate.displayName}</span>
+					{#if top.candidate.platform}
+						<a
+							href={top.candidate.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="platform-badge"
+							style="color:{platformLabels[top.candidate.platform]?.color}; border-color:{platformLabels[top.candidate.platform]?.color}"
+						>
+							{platformLabels[top.candidate.platform]?.name ?? top.candidate.platform}
+						</a>
+					{/if}
 					</div>
 					{#if top.candidate.handle}
-						<span class="handle">@{top.candidate.handle}</span>
+						<span class="handle">@{top.candidate.handle?.replace(/^@/, '')}</span>
 					{/if}
 				</div>
 			</div>
@@ -126,7 +142,7 @@
 						<span class="alt-name">{candidate.candidate.displayName}</span>
 						<span class="alt-score">{Math.round(candidate.score * 100)}%</span>
 						{#if candidate.candidate.handle}
-							<span class="alt-handle">@{candidate.candidate.handle}</span>
+							<span class="alt-handle">@{candidate.candidate.handle?.replace(/^@/, '')}</span>
 						{/if}
 						{#each candidate.signals as signal}
 							<span class="signal-pill small">{signalLabels[signal.type] ?? signal.type}</span>
@@ -202,6 +218,26 @@
 		white-space: nowrap;
 	}
 
+	.platform-badge {
+		font-size: 0.6rem;
+		font-weight: 700;
+		padding: 1px 5px;
+		border: 1px solid;
+		border-radius: 3px;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		white-space: nowrap;
+		opacity: 0.85;
+		text-decoration: none;
+		cursor: pointer;
+		transition: opacity 0.15s;
+	}
+
+	.platform-badge:hover {
+		opacity: 1;
+	}
+
+	
 	.handle {
 		font-size: 0.75rem;
 		color: var(--text-muted);

@@ -337,6 +337,9 @@ export class Orchestrator {
       },
     );
 
+    // Persist enriched channel data back to cache
+    this.cache.writeSync('_job_channels/' + jobId, channels);
+
     // Phase 2: Scrape links tasks
     this.report(jobId, 'links', 0, channels.length, 'Extracting declared links...');
     totalCompleted += await this.processTasks(
@@ -363,6 +366,9 @@ export class Orchestrator {
         }
       },
     );
+
+    // Persist again (handles may have been extracted from about pages)
+    this.cache.writeSync('_job_channels/' + jobId, channels);
 
     // Phase 3: Search + match tasks (per platform)
     const totalSearchTasks = channels.length * job.options.platforms.length;

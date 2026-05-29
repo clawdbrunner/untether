@@ -4,3 +4,7 @@ node_modules/
 build/
 .env
 *.local
+test-subscriptions.csv
+test-subscriptions-50.csv
+pipeline-results.json
+*.db

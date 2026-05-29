@@ -3,6 +3,7 @@ import type { ResourceCache } from '../cache/resource-cache.js';
 import type { RateLimiter } from '../rate-limit/rate-limiter.js';
 import { batchEnrichChannels } from './youtube-api.js';
 import { ytdlpEnrich } from './ytdlp-service.js';
+import { scrapeChannelAvatar } from './avatar-scraper.js';
 
 export async function enrichChannels(
   channels: YouTubeChannel[],
@@ -57,6 +58,24 @@ export async function enrichChannels(
       release();
     }
   }
+
+  // 4. Final fallback: scrape channel page for avatar (og:image)
+  const stillNoAvatar = needsEnrichment.filter((ch) => !ch.avatarUrl);
+  if (stillNoAvatar.length > 0) {
+    process.stderr.write(`[enricher] Scraping avatars for ${stillNoAvatar.length} channels from channel pages\n`);
+  }
+  for (const ch of stillNoAvatar) {
+    try {
+      const avatarUrl = await scrapeChannelAvatar(ch.url, ch.id, cache, limiter);
+      if (avatarUrl) {
+        ch.avatarUrl = avatarUrl;
+        const existing = await cache.getEnrichment(ch.id) ?? {};
+        await cache.setEnrichment(ch.id, { ...existing, avatarUrl });
+      }
+    } catch {
+      // Avatar scrape failed — channel will show placeholder
+    }
+  }
 }
 
 function applyEnrichment(channel: YouTubeChannel, data: Partial<YouTubeChannel>): void {
@@ -65,5 +84,7 @@ function applyEnrichment(channel: YouTubeChannel, data: Partial<YouTubeChannel>)
   if (data.subscriberCount != null && channel.subscriberCount == null) {
     channel.subscriberCount = data.subscriberCount;
   }
-  if (data.handle && !channel.handle) channel.handle = data.handle;
+  if (data.handle && !channel.handle) channel.handle = data.handle.replace(/^@/, '');
+
+
 }

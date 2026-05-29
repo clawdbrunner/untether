@@ -152,7 +152,7 @@ function extractHandle(ytData: unknown): string | undefined {
     if (key === 'channelHandleText' && typeof value === 'object' && value !== null) {
       const text = (value as { simpleText?: string }).simpleText;
       if (text && text.startsWith('@')) {
-        handle = text;
+        handle = text.substring(1);
       }
     }
   });

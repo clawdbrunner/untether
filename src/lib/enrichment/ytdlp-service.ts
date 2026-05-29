@@ -47,24 +47,34 @@ export async function ytdlpEnrich(
   if (json.description) result.description = json.description;
   if (json.channel_follower_count != null) result.subscriberCount = json.channel_follower_count;
 
-  // Find the best avatar thumbnail
+  // Find the best avatar thumbnail — prefer avatar_uncropped or square thumbnails
   if (json.thumbnails && json.thumbnails.length > 0) {
-    // Pick the largest thumbnail that looks like an avatar (square-ish) or just the first
-    const sorted = [...json.thumbnails].sort((a, b) => (b.width ?? 0) - (a.width ?? 0));
-    result.avatarUrl = sorted[0].url;
+    // Look for avatar_uncropped first (best quality avatar)
+    const avatarUncropped = json.thumbnails.find((t: any) => t.id === 'avatar_uncropped');
+    if (avatarUncropped) {
+      result.avatarUrl = avatarUncropped.url;
+    } else {
+      // Fallback: find a square-ish thumbnail (avatar, not banner)
+      const square = json.thumbnails
+        .filter((t: any) => t.width && t.height && Math.abs(t.width - t.height) < t.width * 0.2)
+        .sort((a: any, b: any) => (b.width ?? 0) - (a.width ?? 0));
+      if (square.length > 0) {
+        result.avatarUrl = square[0].url;
+      }
+    }
   }
 
   // Extract handle from uploader_url (e.g., "https://www.youtube.com/@LinusTechTips" → "@LinusTechTips")
   if (json.uploader_url) {
     const handleMatch = json.uploader_url.match(/\/@([^/?#]+)/);
     if (handleMatch) {
-      result.handle = `@${handleMatch[1]}`;
+      result.handle = handleMatch[1];
     }
   }
 
   // Fallback: try uploader_id if it looks like a handle
   if (!result.handle && json.uploader_id && json.uploader_id.startsWith('@')) {
-    result.handle = json.uploader_id;
+    result.handle = json.uploader_id.replace(/^@/, '');
   }
 
   return result;

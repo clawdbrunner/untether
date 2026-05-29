@@ -35,12 +35,14 @@
 		{#if channel.avatarUrl}
 			<img src={channel.avatarUrl} alt="" class="yt-avatar" />
 		{:else}
-			<div class="yt-avatar placeholder"></div>
+			<div class="yt-avatar placeholder" title="No avatar">
+				{channel.title.charAt(0).toUpperCase()}
+			</div>
 		{/if}
 		<div class="yt-info">
 			<span class="yt-name">{channel.title}</span>
 			{#if channel.handle}
-				<span class="yt-handle">@{channel.handle}</span>
+				<span class="yt-handle">@{channel.handle?.replace(/^@/, '')}</span>
 			{/if}
 			{#if channel.subscriberCount}
 				<span class="yt-subs">{formatSubs(channel.subscriberCount)}</span>
@@ -93,6 +95,12 @@
 
 	.placeholder {
 		background: var(--bg-secondary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-muted);
+		font-size: 1rem;
+		font-weight: 700;
 	}
 
 	.yt-info {

@@ -1,42 +1,58 @@
-# sv
+# Untether
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Find your YouTube subscriptions on PeerTube and Odysee.
 
-## Creating a project
+Upload a Google Takeout subscriptions CSV, and Untether searches for matching channels across alternative video platforms using name matching, avatar perceptual hashing, declared links, and handle comparison.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
-```sh
-# create a new project
-npx sv create my-app
+- **Upload & go** — drop in your YouTube subscriptions CSV from Google Takeout
+- **Multi-platform matching** — searches PeerTube and Odysee automatically
+- **Confidence tiers** — matches ranked as Verified, Likely, Possible, or Weak
+- **Avatar comparison** — perceptual hashing detects same-channel avatars even with different crops
+- **Declared link detection** — scrapes YouTube About pages for linked PeerTube/Odysee accounts
+- **No API key required** — works without a YouTube Data API key (optional, improves enrichment)
+- **One-click verify** — click platform badges to open matched channels in a new tab
+- **Bulk actions** — accept all verified/likely matches at once
+- **Export** — download your confirmed matches
+
+## Quick Start
+
+### Docker (recommended)
+
+```bash
+docker compose up -d
 ```
 
-To recreate this project with the same configuration:
+Open http://localhost:3000
 
-```sh
-# recreate this project
-npx sv@0.15.3 create --template minimal --types ts --no-install .
-```
+### Manual
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## Getting Your Subscriptions CSV
 
-To create a production version of your app:
+1. Go to [Google Takeout](https://takeout.google.com)
+2. Deselect all, then select only **YouTube and YouTube Music**
+3. Under YouTube, choose **subscriptions** only
+4. Export and unzip
+5. Upload `subscriptions.csv` from `YouTube and YouTube Music/subscriptions/`
 
-```sh
-npm run build
-```
+## Optional: YouTube API Key
 
-You can preview the production build with `npm run preview`.
+For richer channel data (thumbnails, exact subscriber counts), set a YouTube Data API v3 key in the UI. Works fine without one — avatars are scraped from channel pages instead.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Tech Stack
+
+- **Frontend:** SvelteKit + Svelte 5
+- **Backend:** SvelteKit server routes
+- **Matching engine:** TypeScript — name similarity, pHash, declared links, handle matching
+- **Storage:** SQLite (via better-sqlite3)
+- **Docker:** adapter-node production build
+
+## License
+
+MIT
