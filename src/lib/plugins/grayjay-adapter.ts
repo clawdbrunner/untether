@@ -21,6 +21,7 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
   private runtime: PluginRuntime | null = null;
   private pluginSource: string | null = null;
   private mode: AdapterMode;
+  private cachedClientIp: string | null = null;
 
   constructor(
     private config: PluginConfig,
@@ -165,9 +166,8 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     } else if (this.id === 'rumble') {
       const url = `https://rumble.com/search/channel?q=${encodeURIComponent(query)}`;
 
-      const resp = await this.rateLimitedFetch('GET', url, null, {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      });
+      const rumbleHeaders = await this.getRumbleHeaders();
+      const resp = await this.rateLimitedFetch('GET', url, null, rumbleHeaders);
       const respBody = await resp.text();
 
       map.set(`GET:${url}`, { isOk: resp.ok, code: resp.status, body: respBody });
@@ -196,9 +196,8 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
       let aboutUrl = url.replace(/\/$/, '');
       if (!aboutUrl.includes('/about')) aboutUrl += '/about';
 
-      const resp = await this.rateLimitedFetch('GET', aboutUrl, null, {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      });
+      const rumbleHeaders = await this.getRumbleHeaders();
+      const resp = await this.rateLimitedFetch('GET', aboutUrl, null, rumbleHeaders);
       const respBody = await resp.text();
 
       map.set(`GET:${aboutUrl}`, { isOk: resp.ok, code: resp.status, body: respBody });
@@ -283,14 +282,51 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     };
   }
 
+  // ---- Rumble helpers ----
+
+  private static readonly RUMBLE_UA = 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.200 Mobile Safari/537.36';
+
+  /**
+   * Fetch client IP from ipify.org and cache it for the session.
+   * Rumble requires a RNSC cookie containing the client's IP.
+   */
+  private async getClientIp(): Promise<string> {
+    if (this.cachedClientIp) return this.cachedClientIp;
+    try {
+      const resp = await fetch('https://api.ipify.org?format=json', {
+        signal: AbortSignal.timeout(10_000),
+      });
+      const data = await resp.json() as { ip: string };
+      this.cachedClientIp = data.ip;
+      return this.cachedClientIp;
+    } catch {
+      return '';
+    }
+  }
+
+  /**
+   * Build headers for Rumble requests: correct User-Agent + RNSC cookie.
+   */
+  private async getRumbleHeaders(): Promise<Record<string, string>> {
+    const ip = await this.getClientIp();
+    const headers: Record<string, string> = {
+      'User-Agent': GrayjayPluginAdapter.RUMBLE_UA,
+    };
+    if (ip) {
+      headers['Cookie'] = `RNSC=${ip}`;
+    }
+    return headers;
+  }
+
   // ---- Rumble direct ----
 
   private async searchRumbleDirect(query: string): Promise<ChannelCandidate[]> {
     try {
+      const rumbleHeaders = await this.getRumbleHeaders();
       const resp = await this.rateLimitedFetch('GET',
         `https://rumble.com/search/channel?q=${encodeURIComponent(query)}`,
         null,
-        { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+        rumbleHeaders,
       );
       if (!resp.ok) return [];
       const html = await resp.text();
@@ -304,8 +340,9 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     let aboutUrl = url.replace(/\/$/, '');
     if (!aboutUrl.includes('/about')) aboutUrl += '/about';
     try {
+      const rumbleHeaders = await this.getRumbleHeaders();
       const resp = await this.rateLimitedFetch('GET', aboutUrl, null,
-        { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+        rumbleHeaders,
       );
       if (!resp.ok) return null;
       const html = await resp.text();
