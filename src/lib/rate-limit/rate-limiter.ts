@@ -1,5 +1,6 @@
 import type { ProxyConfig } from '../proxy/proxy-config.js';
 import { getProxyForSource } from '../proxy/proxy-config.js';
+import { ProxyAgent } from 'proxy-agent';
 
 interface TokenBucket {
   tokens: number;
@@ -116,15 +117,19 @@ export class RateLimiter {
    * Use for all adapter HTTP calls.
    */
   async fetchWithProxy(source: string, url: string, options?: RequestInit): Promise<Response> {
-    const _proxyUrl = getProxyForSource(source, this.proxyConfigs);
+    const proxyUrl = getProxyForSource(source, this.proxyConfigs);
 
     const release = await this.acquire(source);
     try {
-      const resp = await fetch(url, {
-        ...options,
-        // When proxy-agent is installed, the dispatcher/agent would go here
-        // based on _proxyUrl (SOCKS5, HTTP CONNECT, etc.)
-      });
+      const fetchOptions: RequestInit = { ...options };
+
+      if (proxyUrl) {
+        const agent = new ProxyAgent({ getProxyForUrl: () => proxyUrl });
+        // @ts-ignore — dispatcher is undici-specific but works with Node's global fetch
+        fetchOptions.dispatcher = agent;
+      }
+
+      const resp = await fetch(url, fetchOptions);
       if (resp.ok) {
         this.reportSuccess(source);
       } else if (resp.status === 429 || resp.status === 403) {

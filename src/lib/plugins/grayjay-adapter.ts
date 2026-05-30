@@ -43,7 +43,7 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
           limiter: this.limiter,
           cpuTimeoutMs: 10000,
         });
-        this.runtime.loadAndEnable(pluginSource);
+        await this.runtime.loadAndEnable(pluginSource);
         process.stderr.write(`[adapter:${this.sourceKey}] Plugin mode active\n`);
       } catch (err) {
         process.stderr.write(`[adapter:${this.sourceKey}] Plugin load failed, falling back to direct mode: ${err}\n`);
@@ -215,25 +215,11 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     body: string | null,
     headers: Record<string, string>,
   ): Promise<Response> {
-    const release = await this.limiter.acquire(this.sourceKey);
-    try {
-      const resp = await fetch(url, {
-        method,
-        headers,
-        body,
-      });
-      if (resp.ok) {
-        this.limiter.reportSuccess(this.sourceKey);
-      } else if (resp.status === 429 || resp.status === 403) {
-        this.limiter.reportFailure(this.sourceKey);
-      }
-      return resp;
-    } catch (err) {
-      this.limiter.reportFailure(this.sourceKey);
-      throw err;
-    } finally {
-      release();
-    }
+    return this.limiter.fetchWithProxy(this.sourceKey, url, {
+      method,
+      headers,
+      body,
+    });
   }
 
   // =====================================================

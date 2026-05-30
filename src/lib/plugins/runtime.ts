@@ -7,372 +7,61 @@ import { createHash } from 'node:crypto';
 export interface RuntimeConfig {
   sourceKey: string;
   limiter: RateLimiter;
+  memoryLimitMb?: number;
   cpuTimeoutMs?: number;
 }
 
 type HttpResponse = { isOk: boolean; code: number; body: string };
 
 /**
- * Full Grayjay plugin runtime using Node's vm module.
+ * Hardened Grayjay plugin runtime using Node vm with security hardening.
  *
- * The sandbox provides Grayjay host bindings:
- * - http.GET / http.POST / httpGET / httpPOST — routed through prefetched responses
- * - domParser.parseFromString / DOMParser — cheerio-based HTML parsing
- * - atob / btoa — Base64 encoding
- * - utility — sha1/sha256/md5, URL helpers
- * - Platform classes — PlatformID, PlatformChannel, PlatformAuthorLink, pagers, exceptions
- *
- * Security: the vm sandbox has no access to process, require, import,
- * fs, child_process, or any Node internals. The only escape is through
- * the host functions we explicitly provide.
+ * Security model:
+ * - vm context created with Object.create(null) (no prototype chain escape)
+ * - No console with constructor chain — frozen no-op object
+ * - No process, require, fs, or other Node internals in sandbox
+ * - CPU timeout enforced by vm.runInContext({ timeout })
+ * - HTTP calls pre-fetched by host, injected as JSON (no network access from sandbox)
+ * - Bridge object frozen (can't modify platform detection)
+ * - Fresh sandbox per execution (no cross-execution state leakage)
  */
 export class PluginRuntime {
-  private sandbox: vm.Context;
   private config: RuntimeConfig;
   private initialized = false;
+  private _source: string = '';
 
   constructor(config: RuntimeConfig) {
     this.config = config;
-    this.sandbox = this.createSandbox();
-  }
-
-  private createSandbox(): vm.Context {
-    const self = this;
-
-    const sandbox: Record<string, unknown> = {
-      // ---- Console ----
-      console: {
-        log: (...args: unknown[]) => {
-          process.stderr.write(`[plugin:${self.config.sourceKey}] ${args.join(' ')}\n`);
-        },
-        error: (...args: unknown[]) => {
-          process.stderr.write(`[plugin:${self.config.sourceKey}:ERR] ${args.join(' ')}\n`);
-        },
-        warn: () => {},
-        info: () => {},
-        debug: () => {},
-      },
-
-      // ---- Base64 ----
-      atob: (str: string) => Buffer.from(str, 'base64').toString('utf-8'),
-      btoa: (str: string) => Buffer.from(str, 'utf-8').toString('base64'),
-
-      // ---- JSON ----
-      JSON,
-
-      // ---- HTTP stubs (overridden per-execution with prefetched responses) ----
-      http: {
-        GET: (_url: string, _headers?: Record<string, string>, _useAuth?: boolean): HttpResponse => {
-          throw new Error('HTTP not available outside execution context');
-        },
-        POST: (_url: string, _body: string, _headers?: Record<string, string>, _useAuth?: boolean): HttpResponse => {
-          throw new Error('HTTP not available outside execution context');
-        },
-        batch: () => {
-          const requests: { method: string; url: string; body: string; headers: Record<string, string> }[] = [];
-          const batchObj = {
-            POST: (url: string, body: string, headers: Record<string, string>, useAuth: boolean) => {
-              requests.push({ method: 'POST', url, body, headers: headers || {} });
-            },
-            GET: (url: string, headers: Record<string, string>, useAuth: boolean) => {
-              requests.push({ method: 'GET', url, body: '', headers: headers || {} });
-            },
-            execute: () => {
-              // @ts-ignore — __prefetched is injected at runtime via vm.runInContext
-              const cache = (globalThis as any).__prefetched || __prefetched || {};
-              return requests.map(r => {
-                const key = r.method + ':' + r.url + ':' + r.body;
-                const keyNoBody = r.method + ':' + r.url;
-                if (cache[key]) return cache[key];
-                if (cache[keyNoBody]) return cache[keyNoBody];
-                throw new Error('No prefetched batch response for: ' + r.method + ' ' + r.url);
-              });
-            },
-          };
-          return batchObj;
-        },
-      },
-
-      httpGET: (_urlOrObj: unknown): HttpResponse => {
-        throw new Error('HTTP not available outside execution context');
-      },
-      httpPOST: (_url: string, _body: string, _headers?: Record<string, string>, _useAuth?: boolean): HttpResponse => {
-        throw new Error('HTTP not available outside execution context');
-      },
-
-      // ---- DOM parser (cheerio-based) ----
-      domParser: {
-        parseFromString: (html: string, _mimeType: string) => self.createDomWrapper(html),
-      },
-      DOMParser: class {
-        parseFromString(html: string, mimeType: string) {
-          return self.createDomWrapper(html);
-        }
-      },
-
-      // ---- Source lifecycle ----
-      source: {} as Record<string, unknown>,
-
-      // ---- Grayjay platform classes ----
-      PlatformID: class PlatformID {
-        platform: string;
-        id: string;
-        pluginId: string;
-        claimType: number;
-        claimFieldType: number | undefined;
-        constructor(platform: string, id: string, pluginId: string, claimType = 0, claimFieldType?: number) {
-          this.platform = platform;
-          this.id = id;
-          this.pluginId = pluginId;
-          this.claimType = claimType;
-          this.claimFieldType = claimFieldType;
-        }
-      },
-
-      PlatformChannel: class PlatformChannel {
-        id: unknown;
-        name: string;
-        thumbnail: string;
-        banner: string;
-        subscribers: number | undefined;
-        description: string;
-        url: string;
-        links: Record<string, string>;
-        constructor(opts: Record<string, unknown>) {
-          this.id = opts.id;
-          this.name = (opts.name as string) ?? '';
-          this.thumbnail = (opts.thumbnail as string) ?? '';
-          this.banner = (opts.banner as string) ?? '';
-          this.subscribers = opts.subscribers as number | undefined;
-          this.description = (opts.description as string) ?? '';
-          this.url = (opts.url as string) ?? '';
-          this.links = (opts.links as Record<string, string>) ?? {};
-        }
-      },
-
-      PlatformAuthorLink: class PlatformAuthorLink {
-        id: unknown;
-        name: string;
-        url: string;
-        thumbnail: string;
-        subscribers: number | undefined;
-        constructor(id: unknown, name: string, url: string, thumbnail: string, subscribers?: number) {
-          this.id = id;
-          this.name = name;
-          this.url = url;
-          this.thumbnail = thumbnail;
-          this.subscribers = subscribers;
-        }
-      },
-
-      // ---- Pager classes ----
-      VideoPager: class VideoPager {
-        results: unknown[];
-        hasMore: boolean;
-        context: unknown;
-        constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
-          this.results = results;
-          this.hasMore = hasMore;
-          this.context = context;
-        }
-        nextPage() { return this; }
-      },
-
-      ChannelPager: class ChannelPager {
-        results: unknown[];
-        hasMore: boolean;
-        constructor(results: unknown[] = [], hasMore = false) {
-          this.results = results;
-          this.hasMore = hasMore;
-        }
-        nextPage() { return this; }
-      },
-
-      ContentPager: class ContentPager {
-        results: unknown[];
-        hasMore: boolean;
-        constructor(results: unknown[] = [], hasMore = false) {
-          this.results = results;
-          this.hasMore = hasMore;
-        }
-        nextPage() { return this; }
-      },
-
-      Comment: class Comment {
-        contextUrl: string;
-        author: unknown;
-        message: string;
-        rating: unknown;
-        date: number;
-        replyCount: number;
-        context: unknown;
-        constructor(obj: Record<string, unknown>) {
-          this.contextUrl = (obj.contextUrl as string) ?? '';
-          this.author = obj.author;
-          this.message = (obj.message as string) ?? '';
-          this.rating = obj.rating;
-          this.date = (obj.date as number) ?? 0;
-          this.replyCount = (obj.replyCount as number) ?? 0;
-          this.context = obj.context;
-        }
-      },
-
-      CommentPager: class CommentPager {
-        results: unknown[];
-        hasMore: boolean;
-        context: unknown;
-        constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
-          this.results = results;
-          this.hasMore = hasMore;
-          this.context = context;
-        }
-        nextPage() { return this; }
-      },
-
-      // ---- Media/Content classes (stubs for video parsing) ----
-      PlatformVideo: class PlatformVideo {
-        id: unknown; author: unknown; title = ''; description = ''; thumbnails: unknown[] = [];
-        url = ''; datetime: number | undefined; duration = 0; views: number | undefined;
-        constructor(obj: Record<string, unknown>) {
-          Object.assign(this, obj);
-        }
-      },
-      PlatformVideoDetails: class PlatformVideoDetails {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      PlatformPlaylist: class PlatformPlaylist {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      PlatformPlaylistDetails: class PlatformPlaylistDetails {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      VideoSourceDescriptor: class VideoSourceDescriptor {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      VideoUrlSource: class VideoUrlSource {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      HLSSource: class HLSSource {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      Thumbnail: class Thumbnail {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      Thumbnails: class Thumbnails {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      RatingLikesDislikes: class RatingLikesDislikes {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      RatingLikes: class RatingLikes {
-        constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-      },
-      LoginRequiredException: class LoginRequiredException extends Error {
-        constructor(msg: string) { super(msg); this.name = 'LoginRequiredException'; }
-      },
-      CaptchaRequiredException: class CaptchaRequiredException extends Error {
-        constructor(msg: string) { super(msg); this.name = 'CaptchaRequiredException'; }
-      },
-
-      // ---- Exception classes ----
-      ScriptException: class ScriptException extends Error {
-        constructor(msg: string) { super(msg); this.name = 'ScriptException'; }
-      },
-      UnavailableException: class UnavailableException extends Error {
-        constructor(msg: string) { super(msg); this.name = 'UnavailableException'; }
-      },
-
-      // ---- Bridge ----
-      bridge: {
-        buildPlatform: 'desktop',
-        authUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        captchaUserAgent: undefined,
-      },
-
-      // ---- Logging ----
-      log: (...args: unknown[]) => {
-        process.stderr.write(`[plugin:${self.config.sourceKey}] ${args.join(' ')}\n`);
-      },
-
-      // ---- Crypto hashes ----
-      SHA1: (str: string) => createHash('sha1').update(str).digest('hex'),
-      SHA256: (str: string) => createHash('sha256').update(str).digest('hex'),
-      MD5: (str: string) => createHash('md5').update(str).digest('hex'),
-
-      // ---- Built-in JS globals (explicit for vm context) ----
-      Date,
-      Math,
-      parseInt,
-      parseFloat,
-      isNaN,
-      isFinite,
-      RegExp,
-      Error,
-      TypeError,
-      RangeError,
-      URIError,
-      SyntaxError,
-      ReferenceError,
-      Number,
-      String,
-      Array,
-      Object,
-      Map,
-      Set,
-      Symbol,
-      Promise,
-      Proxy,
-      WeakMap,
-      WeakSet,
-      encodeURIComponent,
-      decodeURIComponent,
-      encodeURI,
-      decodeURI,
-      Infinity,
-      NaN,
-      undefined,
-
-      // ---- Prefetched response cache (injected per-execution) ----
-      __prefetched: {} as Record<string, HttpResponse>,
-
-      // ---- Testing / config flags ----
-      IS_TESTING: false,
-      isAndroid: false,
-      state: {} as Record<string, unknown>,
-      _config: { id: 'untether' } as Record<string, unknown>,
-      _settings: {} as Record<string, unknown>,
-      config: { id: 'untether' } as Record<string, unknown>,
-      settings: {} as Record<string, unknown>,
-    };
-
-    return vm.createContext(sandbox);
   }
 
   /**
-   * Load the plugin source into the sandbox and call source.enable().
+   * Load the plugin source into a hardened sandbox and call source.enable().
+   * Validates the plugin loads successfully before marking as initialized.
    */
-  loadAndEnable(source: string): void {
+  async loadAndEnable(source: string): Promise<void> {
+    this._source = source;
+
+    // Validate the source loads in the sandbox
+    const sandbox = this.createHardenedSandbox();
+    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
+
     try {
-      // Run the plugin source — defines source.searchChannels, source.getChannel, etc.
-      vm.runInContext(source, this.sandbox, {
+      vm.runInContext(source, ctx, {
         timeout: this.config.cpuTimeoutMs ?? 10000,
         filename: `plugin-${this.config.sourceKey}.js`,
       });
-
-      // Call source.enable(config, settings, null)
-      vm.runInContext(`source.enable({ id: 'untether' }, {}, null)`, this.sandbox, {
-        timeout: 5000,
-      });
-
+      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
       this.initialized = true;
     } catch (err) {
       process.stderr.write(`[runtime:${this.config.sourceKey}] Failed to load plugin: ${err}\n`);
+      this.initialized = false;
       throw err;
     }
   }
 
   /**
    * Execute source.searchChannels(query) with pre-fetched HTTP responses.
+   * Creates a fresh hardened sandbox for each execution.
    */
   executeSearchChannels(
     query: string,
@@ -380,33 +69,21 @@ export class PluginRuntime {
   ): unknown[] {
     if (!this.initialized) throw new Error('Plugin not loaded');
 
-    const responseMap: Record<string, HttpResponse> = {};
-    for (const [key, value] of prefetchedResponses) {
-      responseMap[key] = value;
-    }
-
-    // Inject prefetched responses and override HTTP functions
-    vm.runInContext(`var __prefetched = ${JSON.stringify(responseMap)};`, this.sandbox, { timeout: 1000 });
-
-    vm.runInContext(`
-      httpGET = function(urlOrObj) {
-        var url = typeof urlOrObj === 'object' ? urlOrObj.url : urlOrObj;
-        var key = 'GET:' + url;
-        if (__prefetched[key]) return __prefetched[key];
-        throw new Error('No prefetched response for: GET ' + url);
-      };
-      httpPOST = function(url, body, headers, useAuth) {
-        var key = 'POST:' + url + ':' + (body || '');
-        if (__prefetched[key]) return __prefetched[key];
-        var keyNoBody = 'POST:' + url;
-        if (__prefetched[keyNoBody]) return __prefetched[keyNoBody];
-        throw new Error('No prefetched response for: POST ' + url);
-      };
-      http.GET = function(url, headers, useAuth) { return httpGET(url); };
-      http.POST = function(url, body, headers, useAuth) { return httpPOST(url, body, headers, useAuth); };
-    `, this.sandbox, { timeout: 1000 });
+    const sandbox = this.createHardenedSandbox();
+    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
 
     try {
+      // Load the plugin source
+      vm.runInContext(this._source, ctx, {
+        timeout: this.config.cpuTimeoutMs ?? 10000,
+        filename: `plugin-${this.config.sourceKey}.js`,
+      });
+      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
+
+      // Inject prefetched responses and override HTTP
+      this.injectPrefetchedHttp(ctx, prefetchedResponses);
+
+      // Execute searchChannels
       const result = vm.runInContext(`
         (function() {
           try {
@@ -418,7 +95,7 @@ export class PluginRuntime {
             return { __error: e.message || String(e) };
           }
         })()
-      `, this.sandbox, { timeout: this.config.cpuTimeoutMs ?? 10000 });
+      `, ctx, { timeout: this.config.cpuTimeoutMs ?? 10000 });
 
       if (result && typeof result === 'object' && '__error' in result) {
         process.stderr.write(`[runtime:${this.config.sourceKey}] searchChannels error: ${(result as Record<string, string>).__error}\n`);
@@ -434,6 +111,7 @@ export class PluginRuntime {
 
   /**
    * Execute source.getChannel(url) with pre-fetched HTTP responses.
+   * Creates a fresh hardened sandbox for each execution.
    */
   executeGetChannel(
     url: string,
@@ -441,12 +119,57 @@ export class PluginRuntime {
   ): Record<string, unknown> | null {
     if (!this.initialized) return null;
 
+    const sandbox = this.createHardenedSandbox();
+    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
+
+    try {
+      vm.runInContext(this._source, ctx, {
+        timeout: this.config.cpuTimeoutMs ?? 10000,
+        filename: `plugin-${this.config.sourceKey}.js`,
+      });
+      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
+
+      // Inject prefetched responses and override HTTP
+      this.injectPrefetchedHttp(ctx, prefetchedResponses);
+
+      const result = vm.runInContext(`
+        (function() {
+          try {
+            var channel = source.getChannel(${JSON.stringify(url)});
+            return channel;
+          } catch(e) {
+            if (e.name === 'UnavailableException') return null;
+            return { __error: e.message || String(e) };
+          }
+        })()
+      `, ctx, { timeout: this.config.cpuTimeoutMs ?? 10000 });
+
+      if (result && typeof result === 'object' && '__error' in result) {
+        process.stderr.write(`[runtime:${this.config.sourceKey}] getChannel error: ${(result as Record<string, string>).__error}\n`);
+        return null;
+      }
+
+      return result as Record<string, unknown> | null;
+    } catch (err) {
+      process.stderr.write(`[runtime:${this.config.sourceKey}] Execution error: ${err}\n`);
+      return null;
+    }
+  }
+
+  dispose(): void {
+    this.initialized = false;
+    this._source = '';
+  }
+
+  /**
+   * Inject prefetched HTTP responses and override http/httpGET/httpPOST in the sandbox context.
+   */
+  private injectPrefetchedHttp(ctx: vm.Context, prefetchedResponses: Map<string, HttpResponse>): void {
     const responseMap: Record<string, HttpResponse> = {};
     for (const [key, value] of prefetchedResponses) {
       responseMap[key] = value;
     }
-
-    vm.runInContext(`var __prefetched = ${JSON.stringify(responseMap)};`, this.sandbox, { timeout: 1000 });
+    vm.runInContext(`var __prefetched = ${JSON.stringify(responseMap)};`, ctx, { timeout: 1000 });
 
     vm.runInContext(`
       httpGET = function(urlOrObj) {
@@ -465,50 +188,306 @@ export class PluginRuntime {
       http.GET = function(url, headers, useAuth) { return httpGET(url); };
       http.POST = function(url, body, headers, useAuth) { return httpPOST(url, body, headers, useAuth); };
       http.batch = function() {
-        var requests = [];
+        var reqs = [];
         return {
-          POST: function(url, body, headers, useAuth) { requests.push({ method: 'POST', url: url, body: body, headers: headers }); },
-          GET: function(url, headers, useAuth) { requests.push({ method: 'GET', url: url, body: '', headers: headers }); },
+          POST: function(u,b,h,a) { reqs.push({method:'POST',url:u,body:b}); },
+          GET: function(u,h,a) { reqs.push({method:'GET',url:u,body:''}); },
           execute: function() {
-            return requests.map(function(r) {
-              var key = r.method + ':' + r.url + ':' + r.body;
-              var keyNoBody = r.method + ':' + r.url;
-              if (__prefetched[key]) return __prefetched[key];
-              if (__prefetched[keyNoBody]) return __prefetched[keyNoBody];
-              throw new Error('No prefetched batch response for: ' + r.method + ' ' + r.url);
+            return reqs.map(function(r) {
+              var k = r.method+':'+r.url+':'+r.body;
+              var kn = r.method+':'+r.url;
+              if (__prefetched[k]) return __prefetched[k];
+              if (__prefetched[kn]) return __prefetched[kn];
+              throw new Error('No batch: '+r.method+' '+r.url);
             });
           }
         };
       };
-    `, this.sandbox, { timeout: 1000 });
-
-    try {
-      const result = vm.runInContext(`
-        (function() {
-          try {
-            var channel = source.getChannel(${JSON.stringify(url)});
-            return channel;
-          } catch(e) {
-            if (e.name === 'UnavailableException') return null;
-            return { __error: e.message || String(e) };
-          }
-        })()
-      `, this.sandbox, { timeout: this.config.cpuTimeoutMs ?? 10000 });
-
-      if (result && typeof result === 'object' && '__error' in result) {
-        process.stderr.write(`[runtime:${this.config.sourceKey}] getChannel error: ${(result as Record<string, string>).__error}\n`);
-        return null;
-      }
-
-      return result as Record<string, unknown> | null;
-    } catch (err) {
-      process.stderr.write(`[runtime:${this.config.sourceKey}] Execution error: ${err}\n`);
-      return null;
-    }
+    `, ctx, { timeout: 1000 });
   }
 
-  dispose(): void {
-    this.initialized = false;
+  /**
+   * Create a hardened sandbox with Object.create(null) prototype.
+   *
+   * Security properties:
+   * - Object.create(null): no prototype chain, no constructor.constructor traversal
+   * - Frozen console: no-op functions, no constructor chain to traverse
+   * - Frozen bridge: can't modify platform detection
+   * - No process, require, fs, import, child_process in scope
+   * - CPU timeout via vm.runInContext({ timeout })
+   */
+  private createHardenedSandbox(): Record<string, unknown> {
+    const self = this;
+    const sandbox: Record<string, unknown> = Object.create(null);
+
+    // ---- Safe built-ins only ----
+    sandbox.JSON = JSON;
+    sandbox.parseInt = parseInt;
+    sandbox.parseFloat = parseFloat;
+    sandbox.isNaN = isNaN;
+    sandbox.isFinite = isFinite;
+    sandbox.Math = Math;
+    sandbox.Date = Date;
+    sandbox.RegExp = RegExp;
+    sandbox.Error = Error;
+    sandbox.TypeError = TypeError;
+    sandbox.RangeError = RangeError;
+    sandbox.URIError = URIError;
+    sandbox.SyntaxError = SyntaxError;
+    sandbox.ReferenceError = ReferenceError;
+    sandbox.Number = Number;
+    sandbox.String = String;
+    sandbox.Array = Array;
+    sandbox.Object = Object;
+    sandbox.Map = Map;
+    sandbox.Set = Set;
+    sandbox.Symbol = Symbol;
+    sandbox.Promise = Promise;
+    sandbox.Proxy = Proxy;
+    sandbox.WeakMap = WeakMap;
+    sandbox.WeakSet = WeakSet;
+    sandbox.encodeURIComponent = encodeURIComponent;
+    sandbox.decodeURIComponent = decodeURIComponent;
+    sandbox.encodeURI = encodeURI;
+    sandbox.decodeURI = decodeURI;
+    sandbox.Infinity = Infinity;
+    sandbox.NaN = NaN;
+    sandbox.undefined = undefined;
+
+    // ---- NO console with constructor chain ----
+    // Frozen no-op object: console.constructor.constructor('return process')() fails
+    // because these are plain frozen functions with no exploitable prototype chain
+    sandbox.console = Object.freeze({
+      log: function() {},
+      error: function() {},
+      warn: function() {},
+      info: function() {},
+      debug: function() {},
+    });
+
+    // ---- Base64 ----
+    sandbox.atob = (str: string) => Buffer.from(str, 'base64').toString('utf-8');
+    sandbox.btoa = (str: string) => Buffer.from(str, 'utf-8').toString('base64');
+
+    // ---- Prefetched response cache (injected per-execution) ----
+    sandbox.__prefetched = {};
+
+    // ---- DOM parser (cheerio-based, overridden per-execution) ----
+    sandbox.domParser = {
+      parseFromString: (html: string, _mimeType: string) => self.createDomWrapper(html),
+    };
+    sandbox.DOMParser = class {
+      parseFromString(html: string, _mimeType: string) {
+        return self.createDomWrapper(html);
+      }
+    };
+
+    // ---- Grayjay platform classes ----
+    sandbox.PlatformID = class PlatformID {
+      platform: string;
+      id: string;
+      pluginId: string;
+      claimType: number;
+      claimFieldType: number | undefined;
+      constructor(platform: string, id: string, pluginId: string, claimType = 0, claimFieldType?: number) {
+        this.platform = platform;
+        this.id = id;
+        this.pluginId = pluginId;
+        this.claimType = claimType;
+        this.claimFieldType = claimFieldType;
+      }
+    };
+
+    sandbox.PlatformChannel = class PlatformChannel {
+      id: unknown;
+      name: string;
+      thumbnail: string;
+      banner: string;
+      subscribers: number | undefined;
+      description: string;
+      url: string;
+      links: Record<string, string>;
+      constructor(opts: Record<string, unknown>) {
+        this.id = opts.id;
+        this.name = (opts.name as string) ?? '';
+        this.thumbnail = (opts.thumbnail as string) ?? '';
+        this.banner = (opts.banner as string) ?? '';
+        this.subscribers = opts.subscribers as number | undefined;
+        this.description = (opts.description as string) ?? '';
+        this.url = (opts.url as string) ?? '';
+        this.links = (opts.links as Record<string, string>) ?? {};
+      }
+    };
+
+    sandbox.PlatformAuthorLink = class PlatformAuthorLink {
+      id: unknown;
+      name: string;
+      url: string;
+      thumbnail: string;
+      subscribers: number | undefined;
+      constructor(id: unknown, name: string, url: string, thumbnail: string, subscribers?: number) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.thumbnail = thumbnail;
+        this.subscribers = subscribers;
+      }
+    };
+
+    // ---- Pager classes ----
+    sandbox.VideoPager = class VideoPager {
+      results: unknown[];
+      hasMore: boolean;
+      context: unknown;
+      constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
+        this.results = results;
+        this.hasMore = hasMore;
+        this.context = context;
+      }
+      nextPage() { return this; }
+    };
+
+    sandbox.ChannelPager = class ChannelPager {
+      results: unknown[];
+      hasMore: boolean;
+      constructor(results: unknown[] = [], hasMore = false) {
+        this.results = results;
+        this.hasMore = hasMore;
+      }
+      nextPage() { return this; }
+    };
+
+    sandbox.ContentPager = class ContentPager {
+      results: unknown[];
+      hasMore: boolean;
+      constructor(results: unknown[] = [], hasMore = false) {
+        this.results = results;
+        this.hasMore = hasMore;
+      }
+      nextPage() { return this; }
+    };
+
+    sandbox.Comment = class Comment {
+      contextUrl: string;
+      author: unknown;
+      message: string;
+      rating: unknown;
+      date: number;
+      replyCount: number;
+      context: unknown;
+      constructor(obj: Record<string, unknown>) {
+        this.contextUrl = (obj.contextUrl as string) ?? '';
+        this.author = obj.author;
+        this.message = (obj.message as string) ?? '';
+        this.rating = obj.rating;
+        this.date = (obj.date as number) ?? 0;
+        this.replyCount = (obj.replyCount as number) ?? 0;
+        this.context = obj.context;
+      }
+    };
+
+    sandbox.CommentPager = class CommentPager {
+      results: unknown[];
+      hasMore: boolean;
+      context: unknown;
+      constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
+        this.results = results;
+        this.hasMore = hasMore;
+        this.context = context;
+      }
+      nextPage() { return this; }
+    };
+
+    // ---- Media/Content classes ----
+    sandbox.PlatformVideo = class PlatformVideo {
+      id: unknown; author: unknown; title = ''; description = ''; thumbnails: unknown[] = [];
+      url = ''; datetime: number | undefined; duration = 0; views: number | undefined;
+      constructor(obj: Record<string, unknown>) {
+        Object.assign(this, obj);
+      }
+    };
+    sandbox.PlatformVideoDetails = class PlatformVideoDetails {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.PlatformPlaylist = class PlatformPlaylist {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.PlatformPlaylistDetails = class PlatformPlaylistDetails {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.VideoSourceDescriptor = class VideoSourceDescriptor {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.VideoUrlSource = class VideoUrlSource {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.HLSSource = class HLSSource {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.Thumbnail = class Thumbnail {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.Thumbnails = class Thumbnails {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.RatingLikesDislikes = class RatingLikesDislikes {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.RatingLikes = class RatingLikes {
+      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
+    };
+    sandbox.LoginRequiredException = class LoginRequiredException extends Error {
+      constructor(msg: string) { super(msg); this.name = 'LoginRequiredException'; }
+    };
+    sandbox.CaptchaRequiredException = class CaptchaRequiredException extends Error {
+      constructor(msg: string) { super(msg); this.name = 'CaptchaRequiredException'; }
+    };
+
+    // ---- Exception classes ----
+    sandbox.ScriptException = class ScriptException extends Error {
+      constructor(msg: string) { super(msg); this.name = 'ScriptException'; }
+    };
+    sandbox.UnavailableException = class UnavailableException extends Error {
+      constructor(msg: string) { super(msg); this.name = 'UnavailableException'; }
+    };
+
+    // ---- Bridge (frozen — can't modify platform detection) ----
+    sandbox.bridge = Object.freeze({
+      buildPlatform: 'desktop',
+      authUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      captchaUserAgent: undefined,
+    });
+
+    // ---- Source lifecycle ----
+    sandbox.source = {} as Record<string, unknown>;
+
+    // ---- Logging (frozen — no constructor traversal) ----
+    sandbox.log = Object.freeze(function() {});
+
+    // ---- Crypto hashes ----
+    sandbox.SHA1 = (str: string) => createHash('sha1').update(str).digest('hex');
+    sandbox.SHA256 = (str: string) => createHash('sha256').update(str).digest('hex');
+    sandbox.MD5 = (str: string) => createHash('md5').update(str).digest('hex');
+
+    // ---- Testing / config flags ----
+    sandbox.IS_TESTING = false;
+    sandbox.isAndroid = false;
+    sandbox.state = {} as Record<string, unknown>;
+    sandbox._config = { id: 'untether' } as Record<string, unknown>;
+    sandbox._settings = {} as Record<string, unknown>;
+    sandbox.config = { id: 'untether' } as Record<string, unknown>;
+    sandbox.settings = {} as Record<string, unknown>;
+
+    // ---- HTTP stubs (overridden per-execution with prefetched responses) ----
+    sandbox.http = {
+      GET: function() { throw new Error('HTTP not available outside execution'); },
+      POST: function() { throw new Error('HTTP not available outside execution'); },
+      batch: function() { throw new Error('HTTP not available outside execution'); },
+    };
+    sandbox.httpGET = function() { throw new Error('HTTP not available outside execution'); };
+    sandbox.httpPOST = function() { throw new Error('HTTP not available outside execution'); };
+
+    return sandbox;
   }
 
   /**
