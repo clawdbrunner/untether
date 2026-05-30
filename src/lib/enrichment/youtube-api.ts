@@ -30,7 +30,7 @@ export async function batchEnrichChannels(
     const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${ids}&key=${apiKey}`;
 
     try {
-      const resp = await fetchFn(url);
+      const resp = await fetchFn(url, { signal: AbortSignal.timeout(30_000) });
       if (!resp.ok) {
         console.error(`YouTube API error: ${resp.status} ${resp.statusText}`);
         continue;

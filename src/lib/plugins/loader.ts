@@ -21,7 +21,7 @@ export class PluginLoader {
     if (cached) return cached;
 
     // Fetch the script
-    const resp = await fetch(config.scriptUrl);
+    const resp = await fetch(config.scriptUrl, { signal: AbortSignal.timeout(30_000) });
     if (!resp.ok) throw new Error(`Failed to fetch plugin script: ${resp.status}`);
     const script = await resp.text();
 

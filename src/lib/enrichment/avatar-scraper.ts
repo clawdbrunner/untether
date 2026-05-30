@@ -26,6 +26,7 @@ export async function scrapeChannelAvatar(
         'Accept-Language': 'en-US,en;q=0.9',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!resp.ok) return null;

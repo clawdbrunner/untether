@@ -44,14 +44,14 @@ export async function checkForPluginUpdate(config: PluginConfig): Promise<Plugin
   };
 
   try {
-    const resp = await fetch(config.sourceUrl);
+    const resp = await fetch(config.sourceUrl, { signal: AbortSignal.timeout(30_000) });
     if (!resp.ok) return result;
 
     const remoteConfig = await resp.json();
     result.newVersion = remoteConfig.version;
 
     const scriptUrl = new URL(remoteConfig.scriptUrl, config.sourceUrl).toString();
-    const scriptResp = await fetch(scriptUrl);
+    const scriptResp = await fetch(scriptUrl, { signal: AbortSignal.timeout(30_000) });
     if (!scriptResp.ok) return result;
 
     const scriptSource = await scriptResp.text();
