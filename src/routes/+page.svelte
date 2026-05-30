@@ -4,6 +4,7 @@
 	import ProgressTracker from '$lib/components/ProgressTracker.svelte';
 	import ResultsGrid from '$lib/components/ResultsGrid.svelte';
 	import ExportPanel from '$lib/components/ExportPanel.svelte';
+	import RunSummary from '$lib/components/RunSummary.svelte';
 
 	type AppStep = 'upload' | 'running' | 'results';
 
@@ -13,6 +14,7 @@
 	let pipelineError = $state<string | undefined>();
 	let currentJobId = $state<string | undefined>();
 	let jobStatus = $state<JobStatus | undefined>();
+	let runReport = $state<import('$lib/jobs/run-report').RunReport | null>(null);
 
 	// channelId → platform → url
 	let selections = $state(new Map<string, Map<string, string>>());
@@ -128,6 +130,13 @@
 					}
 				}
 			}
+
+			// Fetch run report
+			const reportRes = await fetch(`/api/jobs/${currentJobId}/report`);
+			if (reportRes.ok) {
+				const reportData = await reportRes.json();
+				runReport = reportData.report;
+			}
 		} else {
 			pipelineError = data.error || 'Failed to load results';
 		}
@@ -219,6 +228,13 @@
 		}
 	}
 
+	async function handleRetry() {
+		if (!currentJobId) return;
+		await fetch(`/api/jobs/${currentJobId}/retry`, { method: 'POST' });
+		// Re-fetch results and report after retry
+		await loadResults();
+	}
+
 	function resetToUpload() {
 		if (pollInterval) {
 			clearInterval(pollInterval);
@@ -226,6 +242,7 @@
 		}
 		step = 'upload';
 		pipelineResult = null;
+		runReport = null;
 		progressEvents = [];
 		pipelineError = undefined;
 		currentJobId = undefined;
@@ -265,6 +282,10 @@
 				<button class="back-btn" onclick={resetToUpload}>&larr; New search</button>
 				<h1 class="results-title">Untether</h1>
 			</div>
+
+			{#if runReport}
+				<RunSummary report={runReport} onretry={handleRetry} />
+			{/if}
 
 			<ResultsGrid
 				result={pipelineResult}
