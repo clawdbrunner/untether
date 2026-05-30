@@ -215,8 +215,10 @@ export class SqliteJobStore implements JobStore {
   }
 
   async updateTaskStatus(taskId: string, status: TaskStatus, result?: unknown, error?: string, errorClass?: ErrorClass, errorDetail?: string): Promise<void> {
-    const current = this.db.prepare('SELECT attempts FROM tasks WHERE id = ?').get(taskId) as { attempts: number } | undefined;
-    const newAttempts = (current?.attempts ?? 0) + 1;
+    const current = this.db.prepare('SELECT attempts, status FROM tasks WHERE id = ?').get(taskId) as { attempts: number; status: string } | undefined;
+    // Only increment attempts on actual retry transitions (pending/failed_retryable -> in_flight)
+    const isRetry = current && (current.status === 'pending' || current.status === 'failed_retryable') && status === 'in_flight';
+    const newAttempts = isRetry ? (current.attempts ?? 0) + 1 : (current?.attempts ?? 0);
     const now = Date.now();
     const nextEligibleAt = status === 'failed_retryable' && errorClass
       ? now + getBackoffForClass(errorClass, newAttempts)
