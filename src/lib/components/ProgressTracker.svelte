@@ -1,7 +1,19 @@
 <script lang="ts">
 	import type { ProgressEvent } from '$lib/types';
 
-	let { events, error }: { events: ProgressEvent[]; error?: string } = $props();
+	let { events, error, platformProgress }: {
+		events: ProgressEvent[];
+		error?: string;
+		platformProgress?: Record<string, { total: number; completed: number; failed: number; status: string }>;
+	} = $props();
+
+	const platformLabels: Record<string, string> = {
+		peertube: 'PeerTube',
+		odysee: 'Odysee',
+		dailymotion: 'Dailymotion',
+		bitchute: 'BitChute',
+		rumble: 'Rumble',
+	};
 
 	const phaseLabels: Record<string, string> = {
 		ingest: 'Parsing CSV',
@@ -54,6 +66,23 @@
 			</div>
 		{/each}
 	</div>
+
+	{#if currentPhase === 'match' && platformProgress && Object.keys(platformProgress).length > 0}
+		<div class="platform-bars">
+			{#each Object.entries(platformProgress) as [platform, pp]}
+				<div class="platform-row" class:complete={pp.status === 'complete'} class:failed={pp.status === 'failed'}>
+					<span class="platform-name">{platformLabels[platform] ?? platform}</span>
+					<div class="platform-bar">
+						<div class="platform-fill" style="width:{pp.total > 0 ? (pp.completed / pp.total * 100) : 0}%"></div>
+						{#if pp.failed > 0}
+							<div class="platform-failed" style="width:{pp.total > 0 ? (pp.failed / pp.total * 100) : 0}%"></div>
+						{/if}
+					</div>
+					<span class="platform-count">{pp.completed}/{pp.total}{#if pp.failed > 0} ({pp.failed} failed){/if}</span>
+				</div>
+			{/each}
+		</div>
+	{/if}
 
 	<div class="status-message">
 		{#if error}
@@ -180,5 +209,62 @@
 	.error-msg {
 		color: var(--danger);
 		font-weight: 600;
+	}
+
+	.platform-bars {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.platform-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.platform-name {
+		width: 80px;
+		font-weight: 600;
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+		flex-shrink: 0;
+	}
+
+	.platform-bar {
+		flex: 1;
+		height: 6px;
+		background: var(--bg-secondary);
+		border-radius: 3px;
+		overflow: hidden;
+		display: flex;
+	}
+
+	.platform-fill {
+		height: 100%;
+		background: var(--accent);
+		transition: width 0.3s ease;
+	}
+
+	.platform-failed {
+		height: 100%;
+		background: var(--warning);
+		transition: width 0.3s ease;
+	}
+
+	.platform-count {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		min-width: 60px;
+		text-align: right;
+		flex-shrink: 0;
+	}
+
+	.platform-row.complete .platform-fill {
+		background: var(--verified);
+	}
+
+	.platform-row.failed .platform-name {
+		color: var(--danger);
 	}
 </style>

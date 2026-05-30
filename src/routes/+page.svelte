@@ -15,6 +15,7 @@
 	let currentJobId = $state<string | undefined>();
 	let jobStatus = $state<JobStatus | undefined>();
 	let runReport = $state<import('$lib/jobs/run-report').RunReport | null>(null);
+	let platformProgress = $state<Record<string, { total: number; completed: number; failed: number; status: string }>>({});
 
 	// channelId → platform → url
 	let selections = $state(new Map<string, Map<string, string>>());
@@ -92,6 +93,8 @@
 				total: job.progress.total,
 				message: `Processing: ${job.progress.completed}/${job.progress.total} tasks complete`
 			}];
+
+			platformProgress = data.platformProgress ?? {};
 
 			if (job.status === 'completed') {
 				clearInterval(pollInterval);
@@ -249,6 +252,7 @@
 		jobStatus = undefined;
 		selections = new Map();
 		selectedIndices = new Map();
+		platformProgress = {};
 	}
 </script>
 
@@ -264,7 +268,7 @@
 	{:else if step === 'running'}
 		<div class="step-container progress-container">
 			<h1 class="running-title">Finding your creators...</h1>
-			<ProgressTracker events={progressEvents} error={pipelineError} />
+			<ProgressTracker events={progressEvents} error={pipelineError} {platformProgress} />
 			<div class="running-controls">
 				{#if jobStatus === 'running'}
 					<button class="pause-btn" onclick={handlePause}>⏸ Pause</button>
