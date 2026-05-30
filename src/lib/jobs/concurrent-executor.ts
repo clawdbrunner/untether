@@ -33,10 +33,11 @@ export class ConcurrentExecutor {
   }
 
   /**
-   * Execute tasks concurrently across sources, bounded per-source by the rate limiter.
+   * Execute tasks concurrently across sources.
    *
-   * NON-NEGOTIABLE: Every task acquires a slot from the per-source limiter
-   * via limiter.acquire(source). The limiter decides when the task actually runs.
+   * Per-source rate limiting is handled by the adapters themselves (they call
+   * limiter.acquire() / fetchWithProxy() internally). The executor only manages
+   * global concurrency and checks the circuit breaker before dispatching.
    */
   async execute(
     tasks: Task[],
@@ -71,13 +72,15 @@ export class ConcurrentExecutor {
       // Acquire global concurrency slot
       await this.acquireGlobal();
 
-      // Acquire per-source rate limiter slot (NON-NEGOTIABLE)
-      let release: (() => void) | null = null;
-      try {
-        release = await this.limiter.acquire(group.source);
-      } catch (err) {
-        // Circuit breaker open — mark task as skipped
-        await this.store.updateTaskStatus(task.id, 'skipped', undefined, String(err), 'blocked', 'Circuit breaker open');
+      // NOTE: We do NOT acquire a per-source limiter slot here.
+      // The adapters already call limiter.acquire()/fetchWithProxy() internally,
+      // which handles per-source rate limiting. Acquiring here would deadlock
+      // because the adapter would wait for a slot we're already holding.
+
+      // Check circuit breaker (advisory — if open, skip this task)
+      const circuitStatus = this.limiter.getCircuitStatus(group.source);
+      if (circuitStatus === 'open') {
+        await this.store.updateTaskStatus(task.id, 'skipped', undefined, `Circuit breaker open for ${group.source}`, 'blocked', 'Circuit breaker open');
         this.releaseGlobal();
         onTaskDone();
         continue;
@@ -105,8 +108,11 @@ export class ConcurrentExecutor {
             await this.store.updateTaskStatus(task.id, targetStatus, undefined, result.error, errClass, result.error);
           }
         }
+      } catch (err) {
+        // Unhandled error from handler — classify and mark appropriately
+        const errClass = classifyError({ errorMessage: String(err) });
+        await this.store.updateTaskStatus(task.id, 'failed_permanent', undefined, String(err), errClass, String(err));
       } finally {
-        release();
         this.releaseGlobal();
         onTaskDone();
       }
