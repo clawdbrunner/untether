@@ -1,5 +1,5 @@
 # Stage 1: Install deps (needs build tools for native modules)
-FROM node:22-slim AS deps
+FROM node:24-slim AS deps
 
 # Install build tools for better-sqlite3 + sharp + isolated-vm
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -22,7 +22,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Stage 3: Runtime (minimal image)
-FROM node:22-slim
+FROM node:24-slim
 
 # Install yt-dlp + runtime deps for sharp + better-sqlite3
 RUN apt-get update && apt-get install -y --no-install-recommends \

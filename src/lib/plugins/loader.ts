@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import type { PluginConfig } from '../types.js';
 import type { ResourceCache } from '../cache/resource-cache.js';
+import { isPluginUrlAllowed } from './trust.js';
 
 export class PluginLoader {
   constructor(private cache: ResourceCache) {}
@@ -10,6 +11,11 @@ export class PluginLoader {
    * Returns the script source string.
    */
   async load(config: PluginConfig): Promise<string> {
+    // Validate URL against allowlist
+    if (!isPluginUrlAllowed(config.sourceUrl)) {
+      throw new Error(`Plugin URL not in allowlist: ${config.sourceUrl}`);
+    }
+
     // Check cache first
     const cached = await this.cache.getPluginScript(config.contentHash);
     if (cached) return cached;

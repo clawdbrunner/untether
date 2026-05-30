@@ -1,8 +1,6 @@
-import vm from 'node:vm';
-import type { RateLimiter } from '../rate-limit/rate-limiter.js';
-import * as cheerio from 'cheerio';
-import type { AnyNode } from 'domhandler';
+import ivm from 'isolated-vm';
 import { createHash } from 'node:crypto';
+import type { RateLimiter } from '../rate-limit/rate-limiter.js';
 
 export interface RuntimeConfig {
   sourceKey: string;
@@ -14,19 +12,19 @@ export interface RuntimeConfig {
 type HttpResponse = { isOk: boolean; code: number; body: string };
 
 /**
- * Hardened Grayjay plugin runtime using Node vm with security hardening.
+ * Grayjay plugin runtime using isolated-vm.
  *
- * Security model:
- * - vm context created with Object.create(null) (no prototype chain escape)
- * - No console with constructor chain — frozen no-op object
- * - No process, require, fs, or other Node internals in sandbox
- * - CPU timeout enforced by vm.runInContext({ timeout })
- * - HTTP calls pre-fetched by host, injected as JSON (no network access from sandbox)
- * - Bridge object frozen (can't modify platform detection)
- * - Fresh sandbox per execution (no cross-execution state leakage)
+ * Security: isolated-vm creates a separate V8 isolate with no shared object space.
+ * - No prototype chain escape (separate heap)
+ * - No process/require/fs access (not in scope)
+ * - Memory limit enforced by V8 (128MB default)
+ * - CPU timeout enforced by ivm
+ * - Host functions via ivm.Reference — sandbox cannot traverse back
+ * - All data transfer via primitives (strings) — no object sharing
  */
 export class PluginRuntime {
   private config: RuntimeConfig;
+  private isolate: ivm.Isolate | null = null;
   private initialized = false;
   private _source: string = '';
 
@@ -35,74 +33,72 @@ export class PluginRuntime {
   }
 
   /**
-   * Load the plugin source into a hardened sandbox and call source.enable().
-   * Validates the plugin loads successfully before marking as initialized.
+   * Load the plugin source into a fresh isolate and call source.enable().
    */
   async loadAndEnable(source: string): Promise<void> {
     this._source = source;
 
-    // Validate the source loads in the sandbox
-    const sandbox = this.createHardenedSandbox();
-    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
-
     try {
-      vm.runInContext(source, ctx, {
+      const { isolate, context } = this.createIsolate();
+
+      this.setupSandboxGlobals(context);
+
+      context.evalSync(source, {
         timeout: this.config.cpuTimeoutMs ?? 10000,
         filename: `plugin-${this.config.sourceKey}.js`,
       });
-      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
+
+      context.evalSync("source.enable({ id: 'untether' }, {}, null)", { timeout: 5000 });
+
+      this.isolate = isolate;
       this.initialized = true;
     } catch (err) {
       process.stderr.write(`[runtime:${this.config.sourceKey}] Failed to load plugin: ${err}\n`);
-      this.initialized = false;
       throw err;
     }
   }
 
   /**
    * Execute source.searchChannels(query) with pre-fetched HTTP responses.
-   * Creates a fresh hardened sandbox for each execution.
    */
   executeSearchChannels(
     query: string,
     prefetchedResponses: Map<string, HttpResponse>,
   ): unknown[] {
-    if (!this.initialized) throw new Error('Plugin not loaded');
+    if (!this.initialized || !this.isolate) throw new Error('Plugin not loaded');
 
-    const sandbox = this.createHardenedSandbox();
-    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
+    const context = this.isolate.createContextSync();
+    this.setupSandboxGlobals(context);
 
     try {
-      // Load the plugin source
-      vm.runInContext(this._source, ctx, {
+      context.evalSync(this._source, {
         timeout: this.config.cpuTimeoutMs ?? 10000,
         filename: `plugin-${this.config.sourceKey}.js`,
       });
-      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
+      context.evalSync("source.enable({ id: 'untether' }, {}, null)", { timeout: 5000 });
 
-      // Inject prefetched responses and override HTTP
-      this.injectPrefetchedHttp(ctx, prefetchedResponses);
+      this.injectPrefetchedHttp(context, prefetchedResponses);
 
-      // Execute searchChannels
-      const result = vm.runInContext(`
+      const result = context.evalSync(`
         (function() {
           try {
             var pager = source.searchChannels(${JSON.stringify(query)});
-            if (pager && pager.results) return pager.results;
-            if (Array.isArray(pager)) return pager;
-            return [];
+            if (pager && pager.results) return JSON.stringify(pager.results);
+            if (Array.isArray(pager)) return JSON.stringify(pager);
+            return '[]';
           } catch(e) {
-            return { __error: e.message || String(e) };
+            return JSON.stringify({ __error: e.message || String(e) });
           }
         })()
-      `, ctx, { timeout: this.config.cpuTimeoutMs ?? 10000 });
+      `, { timeout: this.config.cpuTimeoutMs ?? 10000 });
 
-      if (result && typeof result === 'object' && '__error' in result) {
-        process.stderr.write(`[runtime:${this.config.sourceKey}] searchChannels error: ${(result as Record<string, string>).__error}\n`);
+      const parsed = JSON.parse(result as string);
+      if (parsed && typeof parsed === 'object' && '__error' in parsed) {
+        process.stderr.write(`[runtime:${this.config.sourceKey}] searchChannels error: ${parsed.__error}\n`);
         return [];
       }
 
-      return Array.isArray(result) ? (result as unknown[]) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       process.stderr.write(`[runtime:${this.config.sourceKey}] Execution error: ${err}\n`);
       return [];
@@ -111,45 +107,47 @@ export class PluginRuntime {
 
   /**
    * Execute source.getChannel(url) with pre-fetched HTTP responses.
-   * Creates a fresh hardened sandbox for each execution.
    */
   executeGetChannel(
     url: string,
     prefetchedResponses: Map<string, HttpResponse>,
   ): Record<string, unknown> | null {
-    if (!this.initialized) return null;
+    if (!this.initialized || !this.isolate) return null;
 
-    const sandbox = this.createHardenedSandbox();
-    const ctx = vm.createContext(sandbox, { name: `plugin-${this.config.sourceKey}` });
+    const context = this.isolate.createContextSync();
+    this.setupSandboxGlobals(context);
 
     try {
-      vm.runInContext(this._source, ctx, {
+      context.evalSync(this._source, {
         timeout: this.config.cpuTimeoutMs ?? 10000,
         filename: `plugin-${this.config.sourceKey}.js`,
       });
-      vm.runInContext("source.enable({ id: 'untether' }, {}, null)", ctx, { timeout: 5000 });
+      context.evalSync("source.enable({ id: 'untether' }, {}, null)", { timeout: 5000 });
 
-      // Inject prefetched responses and override HTTP
-      this.injectPrefetchedHttp(ctx, prefetchedResponses);
+      this.injectPrefetchedHttp(context, prefetchedResponses);
 
-      const result = vm.runInContext(`
+      const result = context.evalSync(`
         (function() {
           try {
             var channel = source.getChannel(${JSON.stringify(url)});
-            return channel;
+            if (!channel) return 'null';
+            return JSON.stringify(channel);
           } catch(e) {
-            if (e.name === 'UnavailableException') return null;
-            return { __error: e.message || String(e) };
+            if (e.name === 'UnavailableException') return 'null';
+            return JSON.stringify({ __error: e.message || String(e) });
           }
         })()
-      `, ctx, { timeout: this.config.cpuTimeoutMs ?? 10000 });
+      `, { timeout: this.config.cpuTimeoutMs ?? 10000 });
 
-      if (result && typeof result === 'object' && '__error' in result) {
-        process.stderr.write(`[runtime:${this.config.sourceKey}] getChannel error: ${(result as Record<string, string>).__error}\n`);
+      if (result === 'null') return null;
+
+      const parsed = JSON.parse(result as string);
+      if (parsed && typeof parsed === 'object' && '__error' in parsed) {
+        process.stderr.write(`[runtime:${this.config.sourceKey}] getChannel error: ${parsed.__error}\n`);
         return null;
       }
 
-      return result as Record<string, unknown> | null;
+      return parsed;
     } catch (err) {
       process.stderr.write(`[runtime:${this.config.sourceKey}] Execution error: ${err}\n`);
       return null;
@@ -157,449 +155,191 @@ export class PluginRuntime {
   }
 
   dispose(): void {
+    this.isolate?.dispose();
+    this.isolate = null;
     this.initialized = false;
     this._source = '';
   }
 
+  private createIsolate(): { isolate: ivm.Isolate; context: ivm.Context } {
+    const isolate = new ivm.Isolate({ memoryLimit: this.config.memoryLimitMb ?? 128 });
+    const context = isolate.createContextSync();
+    return { isolate, context };
+  }
+
   /**
-   * Inject prefetched HTTP responses and override http/httpGET/httpPOST in the sandbox context.
+   * Inject prefetched HTTP responses and set up HTTP bridge via ivm.Reference.
    */
-  private injectPrefetchedHttp(ctx: vm.Context, prefetchedResponses: Map<string, HttpResponse>): void {
-    const responseMap: Record<string, HttpResponse> = {};
+  private injectPrefetchedHttp(context: ivm.Context, prefetchedResponses: Map<string, HttpResponse>): void {
+    const prefetchedMap: Record<string, string> = {};
     for (const [key, value] of prefetchedResponses) {
-      responseMap[key] = value;
+      prefetchedMap[key] = JSON.stringify(value);
     }
-    vm.runInContext(`var __prefetched = ${JSON.stringify(responseMap)};`, ctx, { timeout: 1000 });
 
-    vm.runInContext(`
-      httpGET = function(urlOrObj) {
+    const httpFn = new ivm.Reference(function (method: string, url: string, body: string): string {
+      const key = method + ':' + url + ':' + (body || '');
+      const keyNoBody = method + ':' + url;
+      if (prefetchedMap[key]) return prefetchedMap[key];
+      if (prefetchedMap[keyNoBody]) return prefetchedMap[keyNoBody];
+      return JSON.stringify({ isOk: false, code: 0, body: '' });
+    });
+
+    context.global.setSync('__httpRequest', httpFn);
+
+    context.evalSync(`
+      var httpPOST = function(url, body, headers, useAuth) {
+        return JSON.parse(__httpRequest.applySync(undefined, ['POST', url, body || '']));
+      };
+      var httpGET = function(urlOrObj) {
         var url = typeof urlOrObj === 'object' ? urlOrObj.url : urlOrObj;
-        var key = 'GET:' + url;
-        if (__prefetched[key]) return __prefetched[key];
-        throw new Error('No prefetched response for: GET ' + url);
+        return JSON.parse(__httpRequest.applySync(undefined, ['GET', url, '']));
       };
-      httpPOST = function(url, body, headers, useAuth) {
-        var key = 'POST:' + url + ':' + (body || '');
-        if (__prefetched[key]) return __prefetched[key];
-        var keyNoBody = 'POST:' + url;
-        if (__prefetched[keyNoBody]) return __prefetched[keyNoBody];
-        throw new Error('No prefetched response for: POST ' + url);
+      var http = {
+        POST: function(u,b,h,a) { return httpPOST(u,b,h,a); },
+        GET: function(u,h,a) { return httpGET(u); },
+        batch: function() {
+          var reqs = [];
+          return {
+            POST: function(u,b,h,a) { reqs.push({method:'POST',url:u,body:b}); },
+            GET: function(u,h,a) { reqs.push({method:'GET',url:u,body:''}); },
+            execute: function() {
+              return reqs.map(function(r) {
+                return JSON.parse(__httpRequest.applySync(undefined, [r.method, r.url, r.body || '']));
+              });
+            }
+          };
+        }
       };
-      http.GET = function(url, headers, useAuth) { return httpGET(url); };
-      http.POST = function(url, body, headers, useAuth) { return httpPOST(url, body, headers, useAuth); };
-      http.batch = function() {
-        var reqs = [];
-        return {
-          POST: function(u,b,h,a) { reqs.push({method:'POST',url:u,body:b}); },
-          GET: function(u,h,a) { reqs.push({method:'GET',url:u,body:''}); },
-          execute: function() {
-            return reqs.map(function(r) {
-              var k = r.method+':'+r.url+':'+r.body;
-              var kn = r.method+':'+r.url;
-              if (__prefetched[k]) return __prefetched[k];
-              if (__prefetched[kn]) return __prefetched[kn];
-              throw new Error('No batch: '+r.method+' '+r.url);
-            });
-          }
-        };
-      };
-    `, ctx, { timeout: 1000 });
+    `, { timeout: 1000 });
   }
 
   /**
-   * Create a hardened sandbox with Object.create(null) prototype.
+   * Set up sandbox globals in an isolated-vm context.
    *
-   * Security properties:
-   * - Object.create(null): no prototype chain, no constructor.constructor traversal
-   * - Frozen console: no-op functions, no constructor chain to traverse
-   * - Frozen bridge: can't modify platform detection
-   * - No process, require, fs, import, child_process in scope
-   * - CPU timeout via vm.runInContext({ timeout })
+   * All classes and values are defined inside the sandbox via evalSync.
+   * Host functions (atob, btoa, crypto) are bridged via ivm.Reference.
+   *
+   * Security: isolated-vm creates a separate V8 heap. The sandbox
+   * cannot access the host's objects, constructors, or process.
    */
-  private createHardenedSandbox(): Record<string, unknown> {
-    const self = this;
-    const sandbox: Record<string, unknown> = Object.create(null);
+  private setupSandboxGlobals(context: ivm.Context): void {
+    context.evalSync(`
+      // No-op console
+      var console = { log: function(){}, error: function(){}, warn: function(){}, info: function(){}, debug: function(){} };
 
-    // ---- Safe built-ins only ----
-    sandbox.JSON = JSON;
-    sandbox.parseInt = parseInt;
-    sandbox.parseFloat = parseFloat;
-    sandbox.isNaN = isNaN;
-    sandbox.isFinite = isFinite;
-    sandbox.Math = Math;
-    sandbox.Date = Date;
-    sandbox.RegExp = RegExp;
-    sandbox.Error = Error;
-    sandbox.TypeError = TypeError;
-    sandbox.RangeError = RangeError;
-    sandbox.URIError = URIError;
-    sandbox.SyntaxError = SyntaxError;
-    sandbox.ReferenceError = ReferenceError;
-    sandbox.Number = Number;
-    sandbox.String = String;
-    sandbox.Array = Array;
-    sandbox.Object = Object;
-    sandbox.Map = Map;
-    sandbox.Set = Set;
-    sandbox.Symbol = Symbol;
-    sandbox.Promise = Promise;
-    sandbox.Proxy = Proxy;
-    sandbox.WeakMap = WeakMap;
-    sandbox.WeakSet = WeakSet;
-    sandbox.encodeURIComponent = encodeURIComponent;
-    sandbox.decodeURIComponent = decodeURIComponent;
-    sandbox.encodeURI = encodeURI;
-    sandbox.decodeURI = decodeURI;
-    sandbox.Infinity = Infinity;
-    sandbox.NaN = NaN;
-    sandbox.undefined = undefined;
+      // Logging
+      var log = function(){};
 
-    // ---- NO console with constructor chain ----
-    // Frozen no-op object: console.constructor.constructor('return process')() fails
-    // because these are plain frozen functions with no exploitable prototype chain
-    sandbox.console = Object.freeze({
-      log: function() {},
-      error: function() {},
-      warn: function() {},
-      info: function() {},
-      debug: function() {},
-    });
+      // Flags
+      var IS_TESTING = false;
+      var isAndroid = false;
 
-    // ---- Base64 ----
-    sandbox.atob = (str: string) => Buffer.from(str, 'base64').toString('utf-8');
-    sandbox.btoa = (str: string) => Buffer.from(str, 'utf-8').toString('base64');
+      // Bridge
+      var bridge = { buildPlatform: 'desktop', authUserAgent: 'Mozilla/5.0', captchaUserAgent: undefined };
 
-    // ---- Prefetched response cache (injected per-execution) ----
-    sandbox.__prefetched = {};
+      // Config/state
+      var _config = { id: 'untether' };
+      var _settings = {};
+      var config = { id: 'untether' };
+      var settings = {};
+      var state = {};
 
-    // ---- DOM parser (cheerio-based, overridden per-execution) ----
-    sandbox.domParser = {
-      parseFromString: (html: string, _mimeType: string) => self.createDomWrapper(html),
-    };
-    sandbox.DOMParser = class {
-      parseFromString(html: string, _mimeType: string) {
-        return self.createDomWrapper(html);
-      }
-    };
-
-    // ---- Grayjay platform classes ----
-    sandbox.PlatformID = class PlatformID {
-      platform: string;
-      id: string;
-      pluginId: string;
-      claimType: number;
-      claimFieldType: number | undefined;
-      constructor(platform: string, id: string, pluginId: string, claimType = 0, claimFieldType?: number) {
-        this.platform = platform;
-        this.id = id;
-        this.pluginId = pluginId;
-        this.claimType = claimType;
-        this.claimFieldType = claimFieldType;
-      }
-    };
-
-    sandbox.PlatformChannel = class PlatformChannel {
-      id: unknown;
-      name: string;
-      thumbnail: string;
-      banner: string;
-      subscribers: number | undefined;
-      description: string;
-      url: string;
-      links: Record<string, string>;
-      constructor(opts: Record<string, unknown>) {
-        this.id = opts.id;
-        this.name = (opts.name as string) ?? '';
-        this.thumbnail = (opts.thumbnail as string) ?? '';
-        this.banner = (opts.banner as string) ?? '';
-        this.subscribers = opts.subscribers as number | undefined;
-        this.description = (opts.description as string) ?? '';
-        this.url = (opts.url as string) ?? '';
-        this.links = (opts.links as Record<string, string>) ?? {};
-      }
-    };
-
-    sandbox.PlatformAuthorLink = class PlatformAuthorLink {
-      id: unknown;
-      name: string;
-      url: string;
-      thumbnail: string;
-      subscribers: number | undefined;
-      constructor(id: unknown, name: string, url: string, thumbnail: string, subscribers?: number) {
-        this.id = id;
-        this.name = name;
-        this.url = url;
-        this.thumbnail = thumbnail;
-        this.subscribers = subscribers;
-      }
-    };
-
-    // ---- Pager classes ----
-    sandbox.VideoPager = class VideoPager {
-      results: unknown[];
-      hasMore: boolean;
-      context: unknown;
-      constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
-        this.results = results;
-        this.hasMore = hasMore;
-        this.context = context;
-      }
-      nextPage() { return this; }
-    };
-
-    sandbox.ChannelPager = class ChannelPager {
-      results: unknown[];
-      hasMore: boolean;
-      constructor(results: unknown[] = [], hasMore = false) {
-        this.results = results;
-        this.hasMore = hasMore;
-      }
-      nextPage() { return this; }
-    };
-
-    sandbox.ContentPager = class ContentPager {
-      results: unknown[];
-      hasMore: boolean;
-      constructor(results: unknown[] = [], hasMore = false) {
-        this.results = results;
-        this.hasMore = hasMore;
-      }
-      nextPage() { return this; }
-    };
-
-    sandbox.Comment = class Comment {
-      contextUrl: string;
-      author: unknown;
-      message: string;
-      rating: unknown;
-      date: number;
-      replyCount: number;
-      context: unknown;
-      constructor(obj: Record<string, unknown>) {
-        this.contextUrl = (obj.contextUrl as string) ?? '';
-        this.author = obj.author;
-        this.message = (obj.message as string) ?? '';
-        this.rating = obj.rating;
-        this.date = (obj.date as number) ?? 0;
-        this.replyCount = (obj.replyCount as number) ?? 0;
-        this.context = obj.context;
-      }
-    };
-
-    sandbox.CommentPager = class CommentPager {
-      results: unknown[];
-      hasMore: boolean;
-      context: unknown;
-      constructor(results: unknown[] = [], hasMore = false, context: unknown = {}) {
-        this.results = results;
-        this.hasMore = hasMore;
-        this.context = context;
-      }
-      nextPage() { return this; }
-    };
-
-    // ---- Media/Content classes ----
-    sandbox.PlatformVideo = class PlatformVideo {
-      id: unknown; author: unknown; title = ''; description = ''; thumbnails: unknown[] = [];
-      url = ''; datetime: number | undefined; duration = 0; views: number | undefined;
-      constructor(obj: Record<string, unknown>) {
-        Object.assign(this, obj);
-      }
-    };
-    sandbox.PlatformVideoDetails = class PlatformVideoDetails {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.PlatformPlaylist = class PlatformPlaylist {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.PlatformPlaylistDetails = class PlatformPlaylistDetails {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.VideoSourceDescriptor = class VideoSourceDescriptor {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.VideoUrlSource = class VideoUrlSource {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.HLSSource = class HLSSource {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.Thumbnail = class Thumbnail {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.Thumbnails = class Thumbnails {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.RatingLikesDislikes = class RatingLikesDislikes {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.RatingLikes = class RatingLikes {
-      constructor(obj: Record<string, unknown>) { Object.assign(this, obj); }
-    };
-    sandbox.LoginRequiredException = class LoginRequiredException extends Error {
-      constructor(msg: string) { super(msg); this.name = 'LoginRequiredException'; }
-    };
-    sandbox.CaptchaRequiredException = class CaptchaRequiredException extends Error {
-      constructor(msg: string) { super(msg); this.name = 'CaptchaRequiredException'; }
-    };
-
-    // ---- Exception classes ----
-    sandbox.ScriptException = class ScriptException extends Error {
-      constructor(msg: string) { super(msg); this.name = 'ScriptException'; }
-    };
-    sandbox.UnavailableException = class UnavailableException extends Error {
-      constructor(msg: string) { super(msg); this.name = 'UnavailableException'; }
-    };
-
-    // ---- Bridge (frozen — can't modify platform detection) ----
-    sandbox.bridge = Object.freeze({
-      buildPlatform: 'desktop',
-      authUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-      captchaUserAgent: undefined,
-    });
-
-    // ---- Source lifecycle ----
-    sandbox.source = {} as Record<string, unknown>;
-
-    // ---- Logging (frozen — no constructor traversal) ----
-    sandbox.log = Object.freeze(function() {});
-
-    // ---- Crypto hashes ----
-    sandbox.SHA1 = (str: string) => createHash('sha1').update(str).digest('hex');
-    sandbox.SHA256 = (str: string) => createHash('sha256').update(str).digest('hex');
-    sandbox.MD5 = (str: string) => createHash('md5').update(str).digest('hex');
-
-    // ---- Testing / config flags ----
-    sandbox.IS_TESTING = false;
-    sandbox.isAndroid = false;
-    sandbox.state = {} as Record<string, unknown>;
-    sandbox._config = { id: 'untether' } as Record<string, unknown>;
-    sandbox._settings = {} as Record<string, unknown>;
-    sandbox.config = { id: 'untether' } as Record<string, unknown>;
-    sandbox.settings = {} as Record<string, unknown>;
-
-    // ---- HTTP stubs (overridden per-execution with prefetched responses) ----
-    sandbox.http = {
-      GET: function() { throw new Error('HTTP not available outside execution'); },
-      POST: function() { throw new Error('HTTP not available outside execution'); },
-      batch: function() { throw new Error('HTTP not available outside execution'); },
-    };
-    sandbox.httpGET = function() { throw new Error('HTTP not available outside execution'); };
-    sandbox.httpPOST = function() { throw new Error('HTTP not available outside execution'); };
-
-    return sandbox;
-  }
-
-  /**
-   * Create a DOM wrapper object that mimics what plugins expect from domParser.
-   * Uses cheerio under the hood.
-   */
-  private createDomWrapper(html: string): unknown {
-    const $ = cheerio.load(html);
-    return createNodeWrapper($, $.root() as cheerio.Cheerio<AnyNode>);
-  }
-}
-
-// ---- Cheerio-based DOM wrapper ----
-
-function createNodeWrapper(
-  $: cheerio.CheerioAPI,
-  el: cheerio.Cheerio<AnyNode>,
-): Record<string, unknown> {
-  const wrapper: Record<string, unknown> = {
-    querySelectorAll(selector: string): Record<string, unknown>[] {
-      const results: Record<string, unknown>[] = [];
-      el.find(selector).each((_, e) => {
-        results.push(createNodeWrapper($, $(e)));
-      });
-      return results;
-    },
-
-    querySelector(selector: string): Record<string, unknown> | null {
-      const found = el.find(selector).first();
-      if (found.length === 0) return null;
-      return createNodeWrapper($, found);
-    },
-
-    getElementsByClassName(className: string): Record<string, unknown>[] {
-      return (wrapper.querySelectorAll as (s: string) => Record<string, unknown>[])('.' + className);
-    },
-
-    getElementsByTagName(tagName: string): Record<string, unknown>[] {
-      return (wrapper.querySelectorAll as (s: string) => Record<string, unknown>[])(tagName);
-    },
-
-    getAttribute(name: string): string | null {
-      return el.attr(name) ?? null;
-    },
-
-    get textContent(): string {
-      return el.text();
-    },
-
-    get innerHTML(): string {
-      return el.html() ?? '';
-    },
-
-    get tagName(): string {
-      const raw = el.get(0);
-      if (!raw || raw.type !== 'tag') return '';
-      return raw.tagName?.toUpperCase() || '';
-    },
-
-    get childNodes(): Record<string, unknown>[] {
-      const children: Record<string, unknown>[] = [];
-      el.contents().each((_, child) => {
-        children.push(createNodeWrapper($, $(child)));
-      });
-      return children;
-    },
-
-    get children(): Record<string, unknown>[] {
-      const result: Record<string, unknown>[] = [];
-      el.children().each((_, child) => {
-        result.push(createNodeWrapper($, $(child)));
-      });
-      return result;
-    },
-
-    get parentElement(): Record<string, unknown> | null {
-      const parent = el.parent();
-      if (parent.length === 0) return null;
-      return createNodeWrapper($, parent);
-    },
-
-    get classList(): string[] {
-      const cls = el.attr('class');
-      return cls ? cls.split(/\s+/).filter(Boolean) : [];
-    },
-
-    get attributes(): Record<string, string> {
-      const raw = el.get(0);
-      if (!raw || raw.type !== 'tag') return {};
-      const result: Record<string, string> = {};
-      for (const [k, v] of Object.entries(raw.attribs)) {
-        result[k] = String(v);
-      }
-      return result;
-    },
-
-    get length(): number {
-      return el.length;
-    },
-
-    // Support iteration: for (const x of nodeList) { ... }
-    [Symbol.iterator]() {
-      let i = 0;
-      const items = el.toArray().map((e) => createNodeWrapper($, $(e)));
-      return {
-        next: () =>
-          i < items.length
-            ? { value: items[i++], done: false }
-            : { value: undefined, done: true },
+      // Platform classes
+      var PlatformID = function(platform, id, pluginId, claimType, claimFieldType) {
+        this.platform = platform; this.id = id; this.pluginId = pluginId;
+        this.claimType = claimType; this.claimFieldType = claimFieldType;
       };
-    },
-  };
+      var PlatformChannel = function(o) {
+        this.id = o.id; this.name = o.name || ''; this.thumbnail = o.thumbnail || '';
+        this.banner = o.banner || ''; this.subscribers = o.subscribers;
+        this.description = o.description || ''; this.url = o.url || '';
+        this.links = o.links || {};
+      };
+      var PlatformAuthorLink = function(id, name, url, thumbnail, subscribers) {
+        this.id = id; this.name = name; this.url = url;
+        this.thumbnail = thumbnail; this.subscribers = subscribers;
+      };
+      var PlatformVideo = function(o) { Object.assign(this, o); };
+      var PlatformVideoDetails = function(o) { Object.assign(this, o); };
+      var PlatformPlaylist = function(o) { Object.assign(this, o); };
+      var PlatformPlaylistDetails = function(o) { Object.assign(this, o); };
+      var VideoSourceDescriptor = function(o) { Object.assign(this, o); };
+      var VideoUrlSource = function(o) { Object.assign(this, o); };
+      var HLSSource = function(o) { Object.assign(this, o); };
+      var Thumbnail = function(o) { Object.assign(this, o); };
+      var Thumbnails = function(o) { Object.assign(this, o); };
+      var RatingLikesDislikes = function(o) { Object.assign(this, o); };
+      var RatingLikes = function(o) { Object.assign(this, o); };
+      var LoginRequiredException = function(m) { this.message = m; this.name = 'LoginRequiredException'; };
+      var CaptchaRequiredException = function(m) { this.message = m; this.name = 'CaptchaRequiredException'; };
 
-  return wrapper;
+      // Pager classes
+      var VideoPager = function(results, hasMore, context) {
+        this.results = results || []; this.hasMore = hasMore || false; this.context = context || {};
+      };
+      VideoPager.prototype.nextPage = function() { return this; };
+      var ChannelPager = function(results, hasMore) {
+        this.results = results || []; this.hasMore = hasMore || false;
+      };
+      ChannelPager.prototype.nextPage = function() { return this; };
+      var ContentPager = function(results, hasMore) {
+        this.results = results || []; this.hasMore = hasMore || false;
+      };
+      ContentPager.prototype.nextPage = function() { return this; };
+      var CommentPager = function(results, hasMore, context) {
+        this.results = results || []; this.hasMore = hasMore || false; this.context = context || {};
+      };
+      CommentPager.prototype.nextPage = function() { return this; };
+      var Comment = function(o) {
+        this.contextUrl = o.contextUrl || ''; this.author = o.author;
+        this.message = o.message || ''; this.rating = o.rating;
+        this.date = o.date || 0; this.replyCount = o.replyCount || 0;
+        this.context = o.context;
+      };
+
+      // Exception classes
+      var ScriptException = function(msg) { this.message = msg; this.name = 'ScriptException'; };
+      ScriptException.prototype = Object.create(Error.prototype);
+      var UnavailableException = function(msg) { this.message = msg; this.name = 'UnavailableException'; };
+      UnavailableException.prototype = Object.create(Error.prototype);
+
+      // Source lifecycle
+      var source = {};
+
+      // HTTP stubs (overridden per-execution with prefetched responses)
+      var httpGET = function() { throw new Error('HTTP not available outside execution'); };
+      var httpPOST = function() { throw new Error('HTTP not available outside execution'); };
+      var http = {
+        GET: function() { throw new Error('HTTP not available outside execution'); },
+        POST: function() { throw new Error('HTTP not available outside execution'); },
+        batch: function() { throw new Error('HTTP not available outside execution'); }
+      };
+    `, { timeout: 5000 });
+
+    // Set up atob/btoa as host functions (Buffer isn't available in the sandbox)
+    const atobFn = new ivm.Reference(function (str: string): string {
+      return Buffer.from(str, 'base64').toString('utf-8');
+    });
+    const btoaFn = new ivm.Reference(function (str: string): string {
+      return Buffer.from(str, 'utf-8').toString('base64');
+    });
+    context.global.setSync('__atob', atobFn);
+    context.global.setSync('__btoa', btoaFn);
+    context.evalSync('var atob = function(s) { return __atob.applySync(undefined, [s]); }; var btoa = function(s) { return __btoa.applySync(undefined, [s]); };', { timeout: 1000 });
+
+    // Set up crypto hashes as host functions
+    const sha256Fn = new ivm.Reference(function (s: string): string {
+      return createHash('sha256').update(s).digest('hex');
+    });
+    const sha1Fn = new ivm.Reference(function (s: string): string {
+      return createHash('sha1').update(s).digest('hex');
+    });
+    const md5Fn = new ivm.Reference(function (s: string): string {
+      return createHash('md5').update(s).digest('hex');
+    });
+    context.global.setSync('__sha256', sha256Fn);
+    context.global.setSync('__sha1', sha1Fn);
+    context.global.setSync('__md5', md5Fn);
+    context.evalSync('var SHA256 = function(s) { return __sha256.applySync(undefined, [s]); }; var SHA1 = function(s) { return __sha1.applySync(undefined, [s]); }; var MD5 = function(s) { return __md5.applySync(undefined, [s]); };', { timeout: 1000 });
+  }
 }
