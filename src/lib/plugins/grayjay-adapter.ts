@@ -3,49 +3,86 @@ import type { PlatformAdapter } from '../adapters/adapter-interface.js';
 import type { RateLimiter } from '../rate-limit/rate-limiter.js';
 import type { ResourceCache } from '../cache/resource-cache.js';
 import type { PluginConfig } from '../types.js';
-import { PluginSandbox } from './runtime.js';
+import { PluginRuntime } from './runtime.js';
 import * as cheerio from 'cheerio';
 
+export type AdapterMode = 'plugin' | 'direct';
+
+type HttpResponse = { isOk: boolean; code: number; body: string };
+
 /**
- * A PlatformAdapter backed by a Grayjay plugin.
- * HTTP calls are made from the host (through the rate limiter).
- * Data parsing happens in a sandboxed isolated-vm.
+ * A PlatformAdapter backed by a Grayjay plugin with direct-adapter fallback.
+ *
+ * - Plugin mode: loads the actual Grayjay plugin JS and executes it in a vm sandbox
+ * - Direct mode: our own HTTP + parsing implementation (reliable fallback)
  */
 export class GrayjayPluginAdapter implements PlatformAdapter {
   readonly id: 'bitchute' | 'rumble';
-  private sandbox: PluginSandbox;
+  private runtime: PluginRuntime | null = null;
   private pluginSource: string | null = null;
+  private mode: AdapterMode;
 
   constructor(
     private config: PluginConfig,
     private cache: ResourceCache,
     private limiter: RateLimiter,
     private sourceKey: string,
+    mode: AdapterMode = 'plugin',
   ) {
     this.id = config.platformId as 'bitchute' | 'rumble';
-    this.sandbox = new PluginSandbox();
+    this.mode = mode;
   }
 
   async initialize(pluginSource: string): Promise<void> {
     this.pluginSource = pluginSource;
+
+    if (this.mode === 'plugin') {
+      try {
+        this.runtime = new PluginRuntime({
+          sourceKey: this.sourceKey,
+          limiter: this.limiter,
+          cpuTimeoutMs: 10000,
+        });
+        this.runtime.loadAndEnable(pluginSource);
+        process.stderr.write(`[adapter:${this.sourceKey}] Plugin mode active\n`);
+      } catch (err) {
+        process.stderr.write(`[adapter:${this.sourceKey}] Plugin load failed, falling back to direct mode: ${err}\n`);
+        this.mode = 'direct';
+        this.runtime = null;
+      }
+    }
+  }
+
+  get activeMode(): AdapterMode {
+    return this.mode;
   }
 
   async searchChannels(query: string): Promise<ChannelCandidate[]> {
     const cached = await this.cache.getSearchResults(this.sourceKey, query);
     if (cached) return cached;
 
-    const results = this.id === 'bitchute'
-      ? await this.searchBitChute(query)
-      : await this.searchRumble(query);
+    let results: ChannelCandidate[];
+
+    if (this.mode === 'plugin' && this.runtime) {
+      results = await this.searchViaPlugin(query);
+      if (results.length === 0) {
+        process.stderr.write(`[adapter:${this.sourceKey}] Plugin returned 0 results, trying direct fallback\n`);
+        results = await this.searchDirect(query);
+      }
+    } else {
+      results = await this.searchDirect(query);
+    }
 
     await this.cache.setSearchResults(this.sourceKey, query, results);
     return results;
   }
 
   async resolveChannel(url: string): Promise<ChannelCandidate | null> {
-    return this.id === 'bitchute'
-      ? await this.resolveBitChute(url)
-      : await this.resolveRumble(url);
+    if (this.mode === 'plugin' && this.runtime) {
+      const result = await this.resolveViaPlugin(url);
+      if (result) return result;
+    }
+    return this.resolveDirect(url);
   }
 
   async extractBackReferences(
@@ -65,51 +102,185 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     return false;
   }
 
-  // ---- BitChute ----
+  // =====================================================
+  // PLUGIN PATH — executes Grayjay plugin in sandbox
+  // =====================================================
 
-  private async searchBitChute(query: string): Promise<ChannelCandidate[]> {
+  private async searchViaPlugin(query: string): Promise<ChannelCandidate[]> {
+    if (!this.runtime) return [];
+
+    try {
+      const prefetched = await this.prefetchForSearch(query);
+      const rawResults = this.runtime.executeSearchChannels(query, prefetched);
+      return rawResults.map((ch) => this.mapPluginResult(ch as Record<string, unknown>));
+    } catch (err) {
+      process.stderr.write(`[adapter:${this.sourceKey}] Plugin search failed: ${err}\n`);
+      return [];
+    }
+  }
+
+  private async resolveViaPlugin(url: string): Promise<ChannelCandidate | null> {
+    if (!this.runtime) return null;
+
+    try {
+      const prefetched = await this.prefetchForResolve(url);
+      const result = this.runtime.executeGetChannel(url, prefetched);
+      if (!result) return null;
+      return this.mapPluginResult(result);
+    } catch (err) {
+      process.stderr.write(`[adapter:${this.sourceKey}] Plugin resolve failed: ${err}\n`);
+      return null;
+    }
+  }
+
+  private mapPluginResult(ch: Record<string, unknown>): ChannelCandidate {
+    const id = ch.id as Record<string, unknown> | string | undefined;
+    return {
+      url: (ch.url as string) || '',
+      handle: (typeof id === 'object' && id !== null ? (id.id as string) : (id as string)) || undefined,
+      displayName: (ch.name as string) || '',
+      avatarUrl: (ch.thumbnail as string) || undefined,
+      subscriberCount: (ch.subscribers as number) || undefined,
+      description: (ch.description as string) || undefined,
+      platform: this.id,
+    };
+  }
+
+  // =====================================================
+  // PRE-FETCH — makes HTTP calls that the plugin will need
+  // =====================================================
+
+  private async prefetchForSearch(query: string): Promise<Map<string, HttpResponse>> {
+    const map = new Map<string, HttpResponse>();
+
+    if (this.id === 'bitchute') {
+      const url = 'https://api.bitchute.com/api/beta/search/channels';
+      const body = JSON.stringify({ offset: 0, limit: 50, query, sensitivity_id: 'normal', sort: 'new' });
+
+      const resp = await this.rateLimitedFetch('POST', url, body, { 'Content-Type': 'application/json' });
+      const respBody = await resp.text();
+
+      map.set(`POST:${url}:${body}`, { isOk: resp.ok, code: resp.status, body: respBody });
+      map.set(`POST:${url}`, { isOk: resp.ok, code: resp.status, body: respBody });
+    } else if (this.id === 'rumble') {
+      const url = `https://rumble.com/search/channel?q=${encodeURIComponent(query)}`;
+
+      const resp = await this.rateLimitedFetch('GET', url, null, {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      });
+      const respBody = await resp.text();
+
+      map.set(`GET:${url}`, { isOk: resp.ok, code: resp.status, body: respBody });
+    }
+
+    return map;
+  }
+
+  private async prefetchForResolve(url: string): Promise<Map<string, HttpResponse>> {
+    const map = new Map<string, HttpResponse>();
+
+    if (this.id === 'bitchute') {
+      const match = url.match(/bitchute\.com\/channel\/([A-Za-z0-9_\-]+)\/?/);
+      if (match) {
+        const channelId = match[1];
+        const apiUrl = 'https://api.bitchute.com/api/beta/channel';
+        const body = JSON.stringify({ channel_id: channelId });
+
+        const resp = await this.rateLimitedFetch('POST', apiUrl, body, { 'Content-Type': 'application/json' });
+        const respBody = await resp.text();
+
+        map.set(`POST:${apiUrl}:${body}`, { isOk: resp.ok, code: resp.status, body: respBody });
+        map.set(`POST:${apiUrl}`, { isOk: resp.ok, code: resp.status, body: respBody });
+      }
+    } else if (this.id === 'rumble') {
+      let aboutUrl = url.replace(/\/$/, '');
+      if (!aboutUrl.includes('/about')) aboutUrl += '/about';
+
+      const resp = await this.rateLimitedFetch('GET', aboutUrl, null, {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      });
+      const respBody = await resp.text();
+
+      map.set(`GET:${aboutUrl}`, { isOk: resp.ok, code: resp.status, body: respBody });
+      // Also cache the non-about URL key in case the plugin normalizes differently
+      map.set(`GET:${url}`, { isOk: resp.ok, code: resp.status, body: respBody });
+    }
+
+    return map;
+  }
+
+  private async rateLimitedFetch(
+    method: string,
+    url: string,
+    body: string | null,
+    headers: Record<string, string>,
+  ): Promise<Response> {
     const release = await this.limiter.acquire(this.sourceKey);
     try {
-      const resp = await fetch('https://api.bitchute.com/api/beta/search/channels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ offset: 0, limit: 20, query, sensitivity_id: 'normal', sort: 'new' }),
+      const resp = await fetch(url, {
+        method,
+        headers,
+        body,
       });
-
-      if (!resp.ok) { this.limiter.reportFailure(this.sourceKey); return []; }
-      this.limiter.reportSuccess(this.sourceKey);
-
-      const data = await resp.json();
-      const channels = data?.channels ?? [];
-      return channels.map((ch: Record<string, unknown>) => this.mapBitChuteChannel(ch));
-    } catch {
+      if (resp.ok) {
+        this.limiter.reportSuccess(this.sourceKey);
+      } else if (resp.status === 429 || resp.status === 403) {
+        this.limiter.reportFailure(this.sourceKey);
+      }
+      return resp;
+    } catch (err) {
       this.limiter.reportFailure(this.sourceKey);
-      return [];
+      throw err;
     } finally {
       release();
     }
   }
 
-  private async resolveBitChute(url: string): Promise<ChannelCandidate | null> {
+  // =====================================================
+  // DIRECT PATH — our own HTTP + parsing (fallback)
+  // =====================================================
+
+  private async searchDirect(query: string): Promise<ChannelCandidate[]> {
+    if (this.id === 'bitchute') return this.searchBitChuteDirect(query);
+    return this.searchRumbleDirect(query);
+  }
+
+  private async resolveDirect(url: string): Promise<ChannelCandidate | null> {
+    if (this.id === 'bitchute') return this.resolveBitChuteDirect(url);
+    return this.resolveRumbleDirect(url);
+  }
+
+  // ---- BitChute direct ----
+
+  private async searchBitChuteDirect(query: string): Promise<ChannelCandidate[]> {
+    try {
+      const resp = await this.rateLimitedFetch('POST',
+        'https://api.bitchute.com/api/beta/search/channels',
+        JSON.stringify({ offset: 0, limit: 20, query, sensitivity_id: 'normal', sort: 'new' }),
+        { 'Content-Type': 'application/json' },
+      );
+      if (!resp.ok) return [];
+      const data = await resp.json() as { channels?: Record<string, unknown>[] };
+      return (data?.channels ?? []).map((ch) => this.mapBitChuteChannel(ch));
+    } catch {
+      return [];
+    }
+  }
+
+  private async resolveBitChuteDirect(url: string): Promise<ChannelCandidate | null> {
     const match = url.match(/bitchute\.com\/channel\/([A-Za-z0-9_\-]+)\/?/);
     if (!match) return null;
-    const channelId = match[1];
-
-    const release = await this.limiter.acquire(this.sourceKey);
     try {
-      const resp = await fetch('https://api.bitchute.com/api/beta/channel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channel_id: channelId }),
-      });
-
+      const resp = await this.rateLimitedFetch('POST',
+        'https://api.bitchute.com/api/beta/channel',
+        JSON.stringify({ channel_id: match[1] }),
+        { 'Content-Type': 'application/json' },
+      );
       if (!resp.ok) return null;
-      const data = await resp.json();
-      return this.mapBitChuteChannel(data);
+      const ch = await resp.json() as Record<string, unknown>;
+      return this.mapBitChuteChannel(ch);
     } catch {
       return null;
-    } finally {
-      release();
     }
   }
 
@@ -126,50 +297,39 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     };
   }
 
-  // ---- Rumble ----
+  // ---- Rumble direct ----
 
-  private async searchRumble(query: string): Promise<ChannelCandidate[]> {
-    const release = await this.limiter.acquire(this.sourceKey);
+  private async searchRumbleDirect(query: string): Promise<ChannelCandidate[]> {
     try {
-      const searchUrl = `https://rumble.com/search/channel?q=${encodeURIComponent(query)}`;
-      const resp = await fetch(searchUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
-      });
-
-      if (!resp.ok) { this.limiter.reportFailure(this.sourceKey); return []; }
-      this.limiter.reportSuccess(this.sourceKey);
-
+      const resp = await this.rateLimitedFetch('GET',
+        `https://rumble.com/search/channel?q=${encodeURIComponent(query)}`,
+        null,
+        { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+      );
+      if (!resp.ok) return [];
       const html = await resp.text();
-      return this.parseRumbleSearchResults(html);
+      return this.parseRumbleSearchHtml(html);
     } catch {
-      this.limiter.reportFailure(this.sourceKey);
       return [];
-    } finally {
-      release();
     }
   }
 
-  private async resolveRumble(url: string): Promise<ChannelCandidate | null> {
+  private async resolveRumbleDirect(url: string): Promise<ChannelCandidate | null> {
     let aboutUrl = url.replace(/\/$/, '');
     if (!aboutUrl.includes('/about')) aboutUrl += '/about';
-
-    const release = await this.limiter.acquire(this.sourceKey);
     try {
-      const resp = await fetch(aboutUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
-      });
-
+      const resp = await this.rateLimitedFetch('GET', aboutUrl, null,
+        { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+      );
       if (!resp.ok) return null;
       const html = await resp.text();
-      return this.parseRumbleChannelPage(url, html);
+      return this.parseRumbleChannelHtml(url, html);
     } catch {
       return null;
-    } finally {
-      release();
     }
   }
 
-  private parseRumbleSearchResults(html: string): ChannelCandidate[] {
+  private parseRumbleSearchHtml(html: string): ChannelCandidate[] {
     const $ = cheerio.load(html);
     const results: ChannelCandidate[] = [];
 
@@ -203,7 +363,7 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
     return results;
   }
 
-  private parseRumbleChannelPage(url: string, html: string): ChannelCandidate | null {
+  private parseRumbleChannelHtml(url: string, html: string): ChannelCandidate | null {
     const $ = cheerio.load(html);
 
     const name = $('.channel-header--title h1').first().text().trim();
@@ -230,6 +390,6 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
   }
 
   dispose(): void {
-    this.sandbox.dispose();
+    this.runtime?.dispose();
   }
 }

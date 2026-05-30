@@ -4,8 +4,10 @@ import type { ResourceCache } from '../cache/resource-cache.js';
 import { GrayjayPluginAdapter } from './grayjay-adapter.js';
 import { PluginLoader } from './loader.js';
 
-export { PluginSandbox } from './runtime.js';
+export { PluginRuntime } from './runtime.js';
+export type { RuntimeConfig } from './runtime.js';
 export { GrayjayPluginAdapter } from './grayjay-adapter.js';
+export type { AdapterMode } from './grayjay-adapter.js';
 export { PluginLoader } from './loader.js';
 
 // Default plugin configurations (pinned by content hash).
@@ -40,13 +42,14 @@ export async function loadPlugins(
   configs: PluginConfig[],
   cache: ResourceCache,
   limiter: RateLimiter,
+  mode: 'plugin' | 'direct' = 'plugin',
 ): Promise<GrayjayPluginAdapter[]> {
   const loader = new PluginLoader(cache);
   const adapters: GrayjayPluginAdapter[] = [];
 
   for (const config of configs) {
     try {
-      const adapter = new GrayjayPluginAdapter(config, cache, limiter, config.platformId);
+      const adapter = new GrayjayPluginAdapter(config, cache, limiter, config.platformId, mode);
       const source = await loader.load(config);
       await adapter.initialize(source);
       adapters.push(adapter);
