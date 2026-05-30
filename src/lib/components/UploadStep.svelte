@@ -2,18 +2,21 @@
 	let {
 		onstart
 	}: {
-		onstart: (csv: string, platforms: ('peertube' | 'odysee')[], apiKey?: string) => void;
+		onstart: (csv: string, platforms: ('peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble')[], apiKey?: string) => void;
 	} = $props();
 
 	let csvText = $state('');
 	let fileName = $state('');
 	let peertube = $state(true);
 	let odysee = $state(true);
+	let dailymotion = $state(true);
+	let bitchute = $state(true);
+	let rumble = $state(true);
 	let apiKey = $state('');
 	let showApiHelp = $state(false);
 	let dragOver = $state(false);
 
-	let canStart = $derived(csvText.length > 0 && (peertube || odysee));
+	let canStart = $derived(csvText.length > 0 && (peertube || odysee || dailymotion || bitchute || rumble));
 
 	function handleFile(file: File) {
 		if (!file.name.endsWith('.csv')) return;
@@ -49,9 +52,12 @@
 
 	function submit() {
 		if (!canStart) return;
-		const platforms: ('peertube' | 'odysee')[] = [];
+		const platforms: ('peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble')[] = [];
 		if (peertube) platforms.push('peertube');
 		if (odysee) platforms.push('odysee');
+		if (dailymotion) platforms.push('dailymotion');
+		if (bitchute) platforms.push('bitchute');
+		if (rumble) platforms.push('rumble');
 		onstart(csvText, platforms, apiKey || undefined);
 	}
 </script>
@@ -107,6 +113,19 @@
 			<label class="checkbox-label">
 				<input type="checkbox" bind:checked={odysee} />
 				Odysee
+			</label>
+			<label class="checkbox-label">
+				<input type="checkbox" bind:checked={dailymotion} />
+				Dailymotion
+			</label>
+			<label class="checkbox-label">
+				<input type="checkbox" bind:checked={bitchute} />
+				BitChute
+			</label>
+			<label class="checkbox-label">
+				<input type="checkbox" bind:checked={rumble} />
+				Rumble
+				<span class="badge-warning" title="Rumble is Cloudflare-protected. Works best on self-hosted instances with residential IP.">self-host recommended</span>
 			</label>
 		</fieldset>
 
@@ -394,5 +413,16 @@
 	.start-btn:disabled {
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+
+	.badge-warning {
+		font-size: 0.6rem;
+		font-weight: 600;
+		padding: 1px 5px;
+		border: 1px solid color-mix(in srgb, var(--text-muted) 40%, transparent);
+		border-radius: 3px;
+		color: var(--text-muted);
+		white-space: nowrap;
+		cursor: help;
 	}
 </style>

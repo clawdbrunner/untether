@@ -14,7 +14,9 @@ import { enrichChannels } from './enrichment/enricher.js';
 import { extractDeclaredLinks } from './links/link-extractor.js';
 import { PeerTubeAdapter } from './adapters/peertube.js';
 import { OdyseeAdapter } from './adapters/odysee.js';
+import { DailymotionAdapter } from './adapters/dailymotion.js';
 import type { PlatformAdapter } from './adapters/adapter-interface.js';
+import { GrayjayPluginAdapter } from './plugins/grayjay-adapter.js';
 import { matchChannel } from './matching/matcher.js';
 
 export async function runPipeline(
@@ -108,6 +110,26 @@ function createAdapters(
 
   if (config.platforms.includes('odysee')) {
     adapters.set('odysee', new OdyseeAdapter(cache, limiter));
+  }
+
+  if (config.platforms.includes('dailymotion')) {
+    adapters.set('dailymotion', new DailymotionAdapter(cache, limiter));
+  }
+
+  if (config.platforms.includes('bitchute')) {
+    const bcConfig = {
+      id: 'bitchute', name: 'BitChute', platformId: 'bitchute',
+      sourceUrl: '', scriptUrl: '', contentHash: '', version: 1, packages: ['Http'],
+    };
+    adapters.set('bitchute', new GrayjayPluginAdapter(bcConfig, cache, limiter, 'bitchute'));
+  }
+
+  if (config.platforms.includes('rumble')) {
+    const rmConfig = {
+      id: 'rumble', name: 'Rumble', platformId: 'rumble',
+      sourceUrl: '', scriptUrl: '', contentHash: '', version: 1, packages: ['Http', 'DOMParser'],
+    };
+    adapters.set('rumble', new GrayjayPluginAdapter(rmConfig, cache, limiter, 'rumble'));
   }
 
   return adapters;

@@ -145,7 +145,7 @@
 	<div class="grid-header" style="--platform-count:{platforms.length}">
 		<div class="header-cell yt-header">YouTube Channel</div>
 		{#each platforms as platform}
-			<div class="header-cell platform-header">{platform === 'peertube' ? 'PeerTube' : 'Odysee'}</div>
+			<div class="header-cell platform-header">{platform === 'peertube' ? 'PeerTube' : platform === 'odysee' ? 'Odysee' : platform === 'dailymotion' ? 'Dailymotion' : platform === 'bitchute' ? 'BitChute' : platform === 'rumble' ? 'Rumble' : platform}</div>
 		{/each}
 	</div>
 

@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const body = await request.json();
   const { csv, platforms, apiKey } = body as {
     csv: string;
-    platforms: ('peertube' | 'odysee')[];
+    platforms: ('peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble')[];
     apiKey?: string;
   };
 

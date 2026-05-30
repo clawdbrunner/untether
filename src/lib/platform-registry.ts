@@ -91,13 +91,15 @@ export class PlatformRegistry {
   }
 
   /** Classify URL into our target platform types. */
-  classifyForMatch(url: string): 'peertube' | 'odysee' | 'rumble' | null {
+  classifyForMatch(url: string): 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble' | null {
     if (this.isPeerTubeUrl(url)) return 'peertube';
     const entry = this.lookup(url);
     if (!entry) return null;
     if (entry.name === 'PeerTube') return 'peertube';
     if (entry.name === 'Odysee') return 'odysee';
+    if (entry.name === 'Dailymotion') return 'dailymotion';
     if (entry.name === 'Rumble') return 'rumble';
+    if (entry.name === 'BitChute') return 'bitchute';
     return null;
   }
 

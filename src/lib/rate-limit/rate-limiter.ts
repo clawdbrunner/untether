@@ -1,3 +1,6 @@
+import type { ProxyConfig } from '../proxy/proxy-config.js';
+import { getProxyForSource } from '../proxy/proxy-config.js';
+
 interface TokenBucket {
   tokens: number;
   maxTokens: number;
@@ -24,12 +27,16 @@ const SOURCE_DEFAULTS: Record<string, { maxTokens: number; refillRate: number; m
   'youtube-api': { maxTokens: 10, refillRate: 1, maxConcurrent: 3 },
   'peertube': { maxTokens: 10, refillRate: 1, maxConcurrent: 3 },
   'odysee': { maxTokens: 10, refillRate: 1, maxConcurrent: 3 },
+  'dailymotion': { maxTokens: 30, refillRate: 0.5, maxConcurrent: 4 },
+  'bitchute': { maxTokens: 12, refillRate: 0.2, maxConcurrent: 2 },
+  'rumble': { maxTokens: 6, refillRate: 0.1, maxConcurrent: 1 },
 };
 
 export class RateLimiter {
   private buckets = new Map<string, TokenBucket>();
   private concurrency = new Map<string, ConcurrencySlot>();
   private circuits = new Map<string, CircuitBreaker>();
+  private proxyConfigs: ProxyConfig[] = [];
 
   constructor(overrides?: Record<string, { maxTokens?: number; refillRate?: number; maxConcurrent?: number }>) {
     for (const [source, defaults] of Object.entries(SOURCE_DEFAULTS)) {
@@ -97,6 +104,38 @@ export class RateLimiter {
     if (cb.failures >= cb.tripThreshold) {
       cb.state = 'open';
       process.stderr.write(`[rate-limiter] Circuit breaker OPEN for ${source} after ${cb.failures} failures\n`);
+    }
+  }
+
+  setProxyConfigs(configs: ProxyConfig[]): void {
+    this.proxyConfigs = configs;
+  }
+
+  /**
+   * Fetch with rate limiting and optional proxy.
+   * Use for all adapter HTTP calls.
+   */
+  async fetchWithProxy(source: string, url: string, options?: RequestInit): Promise<Response> {
+    const _proxyUrl = getProxyForSource(source, this.proxyConfigs);
+
+    const release = await this.acquire(source);
+    try {
+      const resp = await fetch(url, {
+        ...options,
+        // When proxy-agent is installed, the dispatcher/agent would go here
+        // based on _proxyUrl (SOCKS5, HTTP CONNECT, etc.)
+      });
+      if (resp.ok) {
+        this.reportSuccess(source);
+      } else if (resp.status === 429 || resp.status === 403) {
+        this.reportFailure(source);
+      }
+      return resp;
+    } catch (err) {
+      this.reportFailure(source);
+      throw err;
+    } finally {
+      release();
     }
   }
 

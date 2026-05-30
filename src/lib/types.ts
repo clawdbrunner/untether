@@ -11,7 +11,7 @@ export interface YouTubeChannel {
 }
 
 export interface DeclaredLink {
-  platform: 'peertube' | 'odysee' | 'lbry' | 'rumble' | 'unknown';
+  platform: 'peertube' | 'odysee' | 'dailymotion' | 'lbry' | 'rumble' | 'bitchute' | 'unknown';
   url: string;
   source: 'description' | 'formal_links' | 'back_reference';
 }
@@ -23,14 +23,14 @@ export interface ChannelCandidate {
   avatarUrl?: string;
   subscriberCount?: number;
   description?: string;
-  platform: 'peertube' | 'odysee';
+  platform: 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble';
 }
 
 export type ConfidenceTier = 'verified' | 'likely' | 'possible' | 'weak';
 
 export interface MatchResult {
   youtubeChannel: YouTubeChannel;
-  platform: 'peertube' | 'odysee';
+  platform: 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble';
   candidates: ScoredCandidate[];
 }
 
@@ -50,7 +50,7 @@ export interface MatchSignal {
 // === Pipeline ===
 export interface PipelineConfig {
   youtubeApiKey?: string;
-  platforms: ('peertube' | 'odysee')[];
+  platforms: ('peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble')[];
   peertubeInstances?: string[];
   maxConcurrent?: number;
   onProgress?: (event: ProgressEvent) => void;
@@ -67,7 +67,7 @@ export interface ProgressEvent {
 
 export type JobStatus = 'pending' | 'running' | 'paused' | 'completed' | 'failed';
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed';
-export type TaskKind = 'enrich' | 'scrape_links' | 'search:peertube' | 'search:odysee';
+export type TaskKind = 'enrich' | 'scrape_links' | 'search:peertube' | 'search:odysee' | 'search:dailymotion' | 'search:bitchute' | 'search:rumble';
 
 export interface Job {
   id: string;
@@ -111,4 +111,18 @@ export interface PipelineResult {
     possibleMatches: number;
     weakMatches: number;
   };
+}
+
+// === Plugin Config ===
+export interface PluginConfig {
+  id: string;                // plugin UUID from config JSON
+  name: string;              // display name
+  platformId: string;        // maps to our platform ID: 'bitchute' | 'rumble' | etc.
+  sourceUrl: string;         // URL to the plugin config JSON
+  scriptUrl: string;         // URL to the plugin JS (resolved from config)
+  contentHash: string;       // sha256 pin
+  version: number;           // from config JSON
+  repositoryUrl?: string;    // from config JSON
+  iconUrl?: string;          // from config JSON
+  packages: string[];        // required host packages: 'Http', 'DOMParser', etc.
 }

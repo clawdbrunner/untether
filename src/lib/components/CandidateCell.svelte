@@ -32,6 +32,9 @@
 	const platformLabels: Record<string, { name: string; color: string }> = {
 		peertube: { name: 'PeerTube', color: '#f2690d' },
 		odysee: { name: 'Odysee', color: '#ef0060' },
+		dailymotion: { name: 'Dailymotion', color: '#0066dc' },
+		bitchute: { name: 'BitChute', color: '#ff6600' },
+		rumble: { name: 'Rumble', color: '#85c742' },
 	};
 
 	const signalLabels: Record<string, string> = {

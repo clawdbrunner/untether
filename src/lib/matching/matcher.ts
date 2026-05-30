@@ -14,7 +14,7 @@ import { computePHash, isLowEntropyAvatar } from './phash.js';
 
 export async function matchChannel(
   ytChannel: YouTubeChannel,
-  platform: 'peertube' | 'odysee',
+  platform: 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble',
   adapter: PlatformAdapter,
   declaredLinks: DeclaredLink[],
   cache: ResourceCache,

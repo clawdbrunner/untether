@@ -1,12 +1,13 @@
 # Stage 1: Install deps (needs build tools for native modules)
 FROM node:22-slim AS deps
 
-# Install build tools for better-sqlite3 + sharp
+# Install build tools for better-sqlite3 + sharp + isolated-vm
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     make \
     g++ \
     libvips-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

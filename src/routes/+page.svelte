@@ -28,7 +28,7 @@
 
 	let pollInterval: ReturnType<typeof setInterval> | undefined;
 
-	async function handleStart(csv: string, platforms: ('peertube' | 'odysee')[], apiKey?: string) {
+	async function handleStart(csv: string, platforms: ('peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble')[], apiKey?: string) {
 		step = 'running';
 		progressEvents = [];
 		pipelineError = undefined;

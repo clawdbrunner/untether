@@ -18,7 +18,7 @@ export class ResourceCache {
 
   constructor(baseDir: string) {
     this.baseDir = baseDir;
-    for (const sub of ['enrichment', 'links', 'search/peertube', 'search/odysee', 'avatars', 'scrape']) {
+    for (const sub of ['enrichment', 'links', 'search/peertube', 'search/odysee', 'search/bitchute', 'search/rumble', 'avatars', 'scrape', 'plugins']) {
       mkdirSync(join(this.baseDir, sub), { recursive: true });
     }
   }
@@ -72,6 +72,22 @@ export class ResourceCache {
   async setAvatarHash(url: string, hash: string): Promise<void> {
     const key = this.hashKey(url);
     this.write(join('avatars', `${key}.json`), hash);
+  }
+
+  // --- Plugin scripts ---
+  async getPluginScript(hash: string): Promise<string | null> {
+    const fullPath = join(this.baseDir, 'plugins', `${hash}.js`);
+    if (!existsSync(fullPath)) return null;
+    try {
+      return readFileSync(fullPath, 'utf-8');
+    } catch {
+      return null;
+    }
+  }
+
+  async setPluginScript(hash: string, script: string): Promise<void> {
+    const fullPath = join(this.baseDir, 'plugins', `${hash}.js`);
+    writeFileSync(fullPath, script);
   }
 
   // --- Sync helpers for orchestrator ---
