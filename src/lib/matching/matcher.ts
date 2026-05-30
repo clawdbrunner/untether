@@ -20,7 +20,7 @@ export async function matchChannel(
   cache: ResourceCache,
   limiter: RateLimiter,
 ): Promise<MatchResult> {
-  const candidates: ScoredCandidate[] = [];
+  let candidates: ScoredCandidate[] = [];
   const seen = new Set<string>();
 
   // Compute YouTube avatar hash (cached)
@@ -103,6 +103,9 @@ export async function matchChannel(
 
   // Sort by score descending
   candidates.sort((a, b) => b.score - a.score);
+
+  // Filter out candidates below minimum confidence threshold
+  candidates = candidates.filter(c => c.score >= 0.3);
 
   return {
     youtubeChannel: ytChannel,

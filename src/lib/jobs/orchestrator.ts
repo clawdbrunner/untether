@@ -486,6 +486,12 @@ export class Orchestrator {
       );
     }
 
+    // Suppress cross-contaminants (popular results that appear for many channels)
+    if (!signal.aborted) {
+      const allSearchTasks = await this.store.getTasksByJob(jobId);
+      this.suppressCrossContaminants(allSearchTasks.filter(t => t.kind.startsWith('search:')));
+    }
+
     // Job complete
     if (!signal.aborted) {
       await this.store.updateJobStatus(jobId, 'completed');
@@ -595,6 +601,56 @@ export class Orchestrator {
       lines.push(`  ${platform}: ${succeeded} ok, ${retryable} retryable, ${permanent} permanent, ${skipped} skipped (${pts.length} total)`);
     }
     process.stderr.write(lines.join('\n') + '\n');
+  }
+
+  /**
+   * Detect and suppress candidates that appear for many different YouTube channels
+   * on the same platform — these are almost certainly false positives from
+   * popular/promoted results that the search API returns for every query.
+   */
+  private suppressCrossContaminants(tasks: Task[], threshold: number = 3): void {
+    // Count how many different YouTube channels each candidate URL appears for
+    const candidateAppearances = new Map<string, Set<string>>();
+
+    for (const task of tasks) {
+      if (!task.kind.startsWith('search:') || !task.result) continue;
+      const matchResult = task.result as MatchResult;
+      const ytChannelId = task.targetKey.split(':')[0];
+
+      for (const scored of matchResult.candidates) {
+        const url = scored.candidate.url.toLowerCase();
+        if (!candidateAppearances.has(url)) candidateAppearances.set(url, new Set());
+        candidateAppearances.get(url)!.add(ytChannelId);
+      }
+    }
+
+    // Identify candidates that appear for more than `threshold` different channels
+    const contaminatedUrls = new Set<string>();
+    for (const [url, channelIds] of candidateAppearances) {
+      if (channelIds.size > threshold) {
+        contaminatedUrls.add(url);
+      }
+    }
+
+    if (contaminatedUrls.size === 0) return;
+
+    process.stderr.write(
+      `[orchestrator] Suppressing ${contaminatedUrls.size} cross-contaminant candidates (appeared for >${threshold} channels)\n`,
+    );
+
+    // Remove contaminated candidates from results
+    for (const task of tasks) {
+      if (!task.kind.startsWith('search:') || !task.result) continue;
+      const matchResult = task.result as MatchResult;
+      const before = matchResult.candidates.length;
+      matchResult.candidates = matchResult.candidates.filter(
+        (c) => !contaminatedUrls.has(c.candidate.url.toLowerCase()),
+      );
+      if (matchResult.candidates.length < before) {
+        task.result = matchResult;
+        this.store.updateTaskStatus(task.id, task.status, matchResult);
+      }
+    }
   }
 
   private createAdapters(config: PipelineConfig): Map<string, PlatformAdapter> {
