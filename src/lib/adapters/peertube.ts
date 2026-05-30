@@ -45,6 +45,7 @@ export class PeerTubeAdapter implements PlatformAdapter {
 
       const resp = await fetch(url, {
         headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(30_000),
       });
 
       if (!resp.ok) {
@@ -77,6 +78,7 @@ export class PeerTubeAdapter implements PlatformAdapter {
       const apiUrl = `https://${host}/api/v1/video-channels/${encodeURIComponent(name)}`;
       const resp = await fetch(apiUrl, {
         headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(30_000),
       });
 
       if (!resp.ok) {

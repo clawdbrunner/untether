@@ -8,7 +8,7 @@ export async function computePHash(imageUrlOrBuffer: string | ArrayBuffer): Prom
   let buffer: ArrayBuffer;
 
   if (typeof imageUrlOrBuffer === 'string') {
-    const resp = await fetch(imageUrlOrBuffer);
+    const resp = await fetch(imageUrlOrBuffer, { signal: AbortSignal.timeout(15_000) });
     if (!resp.ok) throw new Error(`Failed to fetch image: ${resp.status}`);
     buffer = await resp.arrayBuffer();
   } else {
@@ -60,7 +60,7 @@ export function hashSimilarity(hash1: string, hash2: string): number {
  */
 export async function isLowEntropyAvatar(imageUrl: string): Promise<boolean> {
   try {
-    const resp = await fetch(imageUrl);
+    const resp = await fetch(imageUrl, { signal: AbortSignal.timeout(15_000) });
     if (!resp.ok) return true;
     const buffer = await resp.arrayBuffer();
 

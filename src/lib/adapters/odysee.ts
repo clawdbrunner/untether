@@ -42,7 +42,7 @@ export class OdyseeAdapter implements PlatformAdapter {
     try {
       // Use Lighthouse for channel search
       const url = `https://lighthouse.odysee.com/search?s=${encodeURIComponent(query)}&size=10&claimType=channel`;
-      const resp = await fetch(url);
+      const resp = await fetch(url, { signal: AbortSignal.timeout(30_000) });
       if (!resp.ok) {
         this.limiter.reportFailure('odysee');
         return [];
@@ -107,6 +107,7 @@ export class OdyseeAdapter implements PlatformAdapter {
           method: 'resolve',
           params: { urls: [lbryUrl] },
         }),
+        signal: AbortSignal.timeout(30_000),
       });
 
       if (!resp.ok) {

@@ -5,6 +5,7 @@ import { classifyError, errorClassToTaskStatus, getBackoffForClass, BACKOFF_CONF
 
 export interface ExecutorConfig {
   globalConcurrency: number;  // default 12
+  taskTimeoutMs: number;      // default 90_000 (90 seconds)
 }
 
 interface TaskGroup {
@@ -29,7 +30,7 @@ export class ConcurrentExecutor {
   constructor(store: JobStore, limiter: RateLimiter, config?: Partial<ExecutorConfig>) {
     this.store = store;
     this.limiter = limiter;
-    this.config = { globalConcurrency: 12, ...config };
+    this.config = { globalConcurrency: 12, taskTimeoutMs: 90_000, ...config };
   }
 
   /**
@@ -80,26 +81,36 @@ export class ConcurrentExecutor {
       // Check circuit breaker (advisory — if open, skip this task)
       const circuitStatus = this.limiter.getCircuitStatus(group.source);
       if (circuitStatus === 'open') {
-        await this.store.updateTaskStatus(task.id, 'skipped', undefined, `Circuit breaker open for ${group.source}`, 'blocked', 'Circuit breaker open');
-        this.releaseGlobal();
-        onTaskDone();
+        try {
+          await this.store.updateTaskStatus(task.id, 'skipped', undefined, `Circuit breaker open for ${group.source}`, 'blocked', 'Circuit breaker open');
+        } catch {
+          // Store error during skip — not fatal
+        } finally {
+          this.releaseGlobal();
+          onTaskDone();
+        }
         continue;
       }
 
       try {
         await this.store.updateTaskStatus(task.id, 'in_flight');
-        const result = await handler(task);
+
+        // Wrap handler in a per-task timeout to prevent hanging tasks
+        // from blocking the entire source queue indefinitely
+        const result = await this.withTimeout(
+          handler(task),
+          this.config.taskTimeoutMs,
+          `Task ${task.id} for ${group.source} timed out after ${this.config.taskTimeoutMs}ms`,
+        );
 
         if (result.success) {
-          this.limiter.reportSuccess(group.source);
+          // Adapters already call limiter.reportSuccess() internally —
+          // do NOT double-report here as it masks adapter-level failures
+          // and prevents the circuit breaker from ever tripping.
           await this.store.updateTaskStatus(task.id, 'succeeded', result.result);
         } else {
           const errClass = result.errorClass ?? classifyError({ errorMessage: result.error });
           const targetStatus = errorClassToTaskStatus(errClass);
-
-          if (errClass === 'rate_limited' || errClass === 'blocked') {
-            this.limiter.reportFailure(group.source);
-          }
 
           const maxForClass = BACKOFF_CONFIG[errClass]?.maxAttempts ?? task.maxAttempts;
           if (targetStatus === 'failed_retryable' && task.attempts + 1 >= maxForClass) {
@@ -109,7 +120,7 @@ export class ConcurrentExecutor {
           }
         }
       } catch (err) {
-        // Unhandled error from handler — classify and mark appropriately
+        // Unhandled error from handler or timeout — classify and mark appropriately
         const errClass = classifyError({ errorMessage: String(err) });
         await this.store.updateTaskStatus(task.id, 'failed_permanent', undefined, String(err), errClass, String(err));
       } finally {
@@ -117,6 +128,16 @@ export class ConcurrentExecutor {
         onTaskDone();
       }
     }
+  }
+
+  private withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+    let timer: ReturnType<typeof setTimeout>;
+    return Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), ms);
+      }),
+    ]).finally(() => clearTimeout(timer!));
   }
 
   private async acquireGlobal(): Promise<void> {

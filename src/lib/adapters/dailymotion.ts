@@ -38,7 +38,7 @@ export class DailymotionAdapter implements PlatformAdapter {
     const release = await this.limiter.acquire('dailymotion');
     try {
       const url = `${DM_API}/users?search=${encodeURIComponent(query)}&fields=${DM_FIELDS}&limit=10`;
-      const resp = await fetch(url);
+      const resp = await fetch(url, { signal: AbortSignal.timeout(30_000) });
 
       if (!resp.ok) {
         this.limiter.reportFailure('dailymotion');
@@ -72,7 +72,7 @@ export class DailymotionAdapter implements PlatformAdapter {
     const release = await this.limiter.acquire('dailymotion');
     try {
       const apiUrl = `${DM_API}/user/${encodeURIComponent(username)}?fields=${DM_FIELDS}`;
-      const resp = await fetch(apiUrl);
+      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(30_000) });
 
       if (!resp.ok) {
         if (resp.status !== 404) this.limiter.reportFailure('dailymotion');

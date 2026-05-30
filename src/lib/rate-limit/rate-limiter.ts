@@ -129,6 +129,12 @@ export class RateLimiter {
         fetchOptions.dispatcher = agent;
       }
 
+      // Add a timeout if no signal was provided — prevents hanging on
+      // unresponsive servers from blocking the source queue forever
+      if (!fetchOptions.signal) {
+        fetchOptions.signal = AbortSignal.timeout(30_000);
+      }
+
       const resp = await fetch(url, fetchOptions);
       if (resp.ok) {
         this.reportSuccess(source);
