@@ -66,7 +66,9 @@ export interface ProgressEvent {
 // === Job State (§9.5) ===
 
 export type JobStatus = 'pending' | 'running' | 'paused' | 'completed' | 'failed';
-export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed';
+export type TaskStatus = 'pending' | 'in_flight' | 'succeeded' | 'failed_retryable' | 'failed_permanent' | 'skipped';
+
+export type ErrorClass = 'ok' | 'transient' | 'rate_limited' | 'blocked' | 'not_found' | 'permanent';
 export type TaskKind = 'enrich' | 'scrape_links' | 'search:peertube' | 'search:odysee' | 'search:dailymotion' | 'search:bitchute' | 'search:rumble';
 
 export interface Job {
@@ -87,6 +89,10 @@ export interface Task {
   attempts: number;
   maxAttempts: number;
   lastError?: string;
+  lastErrorClass?: ErrorClass;
+  lastErrorDetail?: string;
+  nextEligibleAt?: number;
+  updatedAt: number;
   result?: unknown;
 }
 

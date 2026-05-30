@@ -52,6 +52,7 @@ export class Orchestrator {
 
     // Generate tasks for this job
     const tasks: Omit<Task, 'id'>[] = [];
+    const now = Date.now();
     for (const ch of channels) {
       // Enrichment task
       tasks.push({
@@ -61,6 +62,7 @@ export class Orchestrator {
         status: 'pending',
         attempts: 0,
         maxAttempts: 3,
+        updatedAt: now,
       });
 
       // Scrape links task
@@ -71,6 +73,7 @@ export class Orchestrator {
         status: 'pending',
         attempts: 0,
         maxAttempts: 3,
+        updatedAt: now,
       });
 
       // Search tasks per platform
@@ -82,6 +85,7 @@ export class Orchestrator {
           status: 'pending',
           attempts: 0,
           maxAttempts: 3,
+          updatedAt: now,
         });
       }
     }
@@ -227,9 +231,9 @@ export class Orchestrator {
       }
     }
 
-    const enriched = tasks.filter((t) => t.kind === 'enrich' && t.status === 'completed').length;
+    const enriched = tasks.filter((t) => t.kind === 'enrich' && t.status === 'succeeded').length;
     const declaredLinks = tasks
-      .filter((t) => t.kind === 'scrape_links' && t.status === 'completed')
+      .filter((t) => t.kind === 'scrape_links' && t.status === 'succeeded')
       .reduce((sum, t) => sum + ((t.result as { linkCount: number })?.linkCount ?? 0), 0);
 
     return {
@@ -446,14 +450,14 @@ export class Orchestrator {
       // Process in parallel (up to batchSize)
       await Promise.allSettled(
         matching.map(async (task) => {
-          await this.store.updateTaskStatus(task.id, 'running');
+          await this.store.updateTaskStatus(task.id, 'in_flight');
           const result = await handler(task);
           if (result.success) {
-            await this.store.updateTaskStatus(task.id, 'completed', result.result);
+            await this.store.updateTaskStatus(task.id, 'succeeded', result.result);
           } else {
             // Check if we should retry
             if (task.attempts + 1 >= task.maxAttempts) {
-              await this.store.updateTaskStatus(task.id, 'failed', undefined, result.error);
+              await this.store.updateTaskStatus(task.id, 'failed_permanent', undefined, result.error);
             } else {
               // Reset to pending for retry
               await this.store.updateTaskStatus(task.id, 'pending', undefined, result.error);
@@ -469,7 +473,7 @@ export class Orchestrator {
       const currentJob = await this.store.getJob(jobId);
       if (currentJob) {
         const allTasks = await this.store.getTasksByJob(jobId);
-        const completed = allTasks.filter((t) => t.status === 'completed').length;
+        const completed = allTasks.filter((t) => t.status === 'succeeded').length;
         await this.store.updateJobProgress(jobId, completed, allTasks.length);
       }
     }

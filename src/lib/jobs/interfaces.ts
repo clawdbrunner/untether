@@ -3,6 +3,7 @@ import type {
   JobStatus,
   Task,
   TaskStatus,
+  ErrorClass,
   Selection,
   PipelineConfig,
   ConfidenceTier,
@@ -25,7 +26,7 @@ export interface JobStore {
   createTasks(jobId: string, tasks: Omit<Task, 'id'>[]): Promise<Task[]>;
   getNextPendingTasks(jobId: string, limit: number): Promise<Task[]>;
   getTasksByJob(jobId: string): Promise<Task[]>;
-  updateTaskStatus(taskId: string, status: TaskStatus, result?: unknown, error?: string): Promise<void>;
+  updateTaskStatus(taskId: string, status: TaskStatus, result?: unknown, error?: string, errorClass?: ErrorClass, errorDetail?: string): Promise<void>;
 
   // Selections (user-confirmed matches)
   setSelection(jobId: string, channelId: string, platform: string, url: string, tier: ConfidenceTier): Promise<void>;

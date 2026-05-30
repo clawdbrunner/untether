@@ -15,11 +15,11 @@ export class SqliteTaskQueue implements TaskQueue {
   }
 
   async complete(taskId: string, result: unknown): Promise<void> {
-    await this.store.updateTaskStatus(taskId, 'completed', result);
+    await this.store.updateTaskStatus(taskId, 'succeeded', result);
   }
 
   async fail(taskId: string, error: string): Promise<void> {
-    await this.store.updateTaskStatus(taskId, 'failed', undefined, error);
+    await this.store.updateTaskStatus(taskId, 'failed_permanent', undefined, error);
   }
 
   async pendingCount(): Promise<number> {
