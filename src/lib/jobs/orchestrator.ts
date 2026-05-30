@@ -21,6 +21,9 @@ import { OdyseeAdapter } from '../adapters/odysee.js';
 import { DailymotionAdapter } from '../adapters/dailymotion.js';
 import type { PlatformAdapter } from '../adapters/adapter-interface.js';
 import { GrayjayPluginAdapter } from '../plugins/grayjay-adapter.js';
+import { classifyError, errorClassToTaskStatus, getBackoffForClass, BACKOFF_CONFIG } from './error-classifier.js';
+import { ConcurrentExecutor } from './concurrent-executor.js';
+import type { ErrorClass } from '../types.js';
 
 export class Orchestrator {
   store: SqliteJobStore;
@@ -289,6 +292,60 @@ export class Orchestrator {
     this.store.close();
   }
 
+  /**
+   * Retry failed_retryable tasks for a completed/failed job.
+   * Returns the number of tasks retried.
+   */
+  async retryFailed(jobId: string): Promise<number> {
+    const job = await this.store.getJob(jobId);
+    if (!job) throw new Error(`Job ${jobId} not found`);
+
+    const retryable = await this.store.getRetryableTasks(jobId);
+    if (retryable.length === 0) return 0;
+
+    const channels: YouTubeChannel[] =
+      this.cache.readSync<YouTubeChannel[]>('_job_channels/' + jobId) ?? [];
+    const adapters = this.createAdapters(job.options);
+    const executor = new ConcurrentExecutor(this.store, this.limiter, {
+      globalConcurrency: job.options.maxConcurrent ?? 12,
+    });
+
+    const signal = new AbortController().signal;
+    await executor.execute(
+      retryable,
+      async (task) => {
+        if (!task.kind.startsWith('search:')) {
+          return { success: false, error: 'Only search tasks can be retried', errorClass: 'permanent' as ErrorClass };
+        }
+        const [channelId, platform] = task.targetKey.split(':');
+        const ch = channels.find((c) => c.id === channelId);
+        if (!ch) return { success: false, error: 'Channel not found', errorClass: 'permanent' as ErrorClass };
+
+        const adapter = adapters.get(platform);
+        if (!adapter) return { success: false, error: `No adapter for ${platform}`, errorClass: 'permanent' as ErrorClass };
+
+        try {
+          const links = (await this.cache.getDeclaredLinks(ch.id)) ?? [];
+          const matchResult = await matchChannel(
+            ch,
+            platform as 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble',
+            adapter,
+            links,
+            this.cache,
+            this.limiter,
+          );
+          return { success: true, result: matchResult };
+        } catch (err) {
+          const errClass = classifyError({ errorMessage: String(err) });
+          return { success: false, error: String(err), errorClass: errClass };
+        }
+      },
+      signal,
+    );
+
+    return retryable.length;
+  }
+
   // --- Internal ---
 
   private report(
@@ -376,53 +433,69 @@ export class Orchestrator {
     // Persist again (handles may have been extracted from about pages)
     this.cache.writeSync('_job_channels/' + jobId, channels);
 
-    // Phase 3: Search + match tasks (per platform)
-    const totalSearchTasks = channels.length * job.options.platforms.length;
-    let searchCompleted = 0;
+    // Phase 3: Search + match tasks — CONCURRENT across sources
+    const allTasks = await this.store.getTasksByJob(jobId);
+    const searchTasks = allTasks.filter(t => t.kind.startsWith('search:') && (t.status === 'pending' || t.status === 'failed_retryable'));
+    const executor = new ConcurrentExecutor(this.store, this.limiter, {
+      globalConcurrency: job.options.maxConcurrent ?? 12,
+    });
 
-    for (const platform of job.options.platforms) {
-      const kind: TaskKind = `search:${platform}` as TaskKind;
+    const searchHandler = async (task: Task) => {
+      const [channelId, platform] = task.targetKey.split(':');
+      const ch = channels.find((c) => c.id === channelId);
+      if (!ch) return { success: false, error: 'Channel not found', errorClass: 'permanent' as ErrorClass };
+
       const adapter = adapters.get(platform);
-      if (!adapter) continue;
+      if (!adapter) return { success: false, error: `No adapter for ${platform}`, errorClass: 'permanent' as ErrorClass };
 
-      this.report(jobId, 'match', searchCompleted, totalSearchTasks, `Matching on ${platform}...`);
+      try {
+        const links = (await this.cache.getDeclaredLinks(ch.id)) ?? [];
+        const matchResult = await matchChannel(
+          ch,
+          platform as 'peertube' | 'odysee' | 'dailymotion' | 'bitchute' | 'rumble',
+          adapter,
+          links,
+          this.cache,
+          this.limiter,
+        );
+        return { success: true, result: matchResult };
+      } catch (err) {
+        const errClass = classifyError({ errorMessage: String(err) });
+        return { success: false, error: String(err), errorClass: errClass };
+      }
+    };
 
-      totalCompleted += await this.processTasks(
-        jobId,
-        kind,
-        BATCH_SIZE,
-        signal,
-        async (task) => {
-          const [channelId] = task.targetKey.split(':');
-          const ch = channels.find((c) => c.id === channelId);
-          if (!ch) return { success: false, error: 'Channel not found' };
+    this.report(jobId, 'match', 0, searchTasks.length, 'Matching across platforms...');
+    totalCompleted += await executor.execute(
+      searchTasks,
+      searchHandler,
+      signal,
+      (completed, total) => this.report(jobId, 'match', completed, total, `Matching...`),
+    );
 
-          try {
-            // Get declared links for this channel
-            const links = (await this.cache.getDeclaredLinks(ch.id)) ?? [];
+    // Auto-retry passes (up to 2 passes)
+    const MAX_RETRY_PASSES = 2;
+    for (let retryPass = 0; retryPass < MAX_RETRY_PASSES; retryPass++) {
+      if (signal.aborted) break;
+      const retryableTasks = await this.store.getRetryableTasks(jobId);
+      if (retryableTasks.length === 0) break;
 
-            const matchResult = await matchChannel(
-              ch,
-              platform,
-              adapter,
-              links,
-              this.cache,
-              this.limiter,
-            );
-            return { success: true, result: matchResult };
-          } catch (err) {
-            return { success: false, error: String(err) };
-          }
-        },
+      this.report(jobId, 'match', 0, retryableTasks.length, `Retry pass ${retryPass + 1}: ${retryableTasks.length} tasks`);
+      await executor.execute(retryableTasks, searchHandler, signal, (completed, total) =>
+        this.report(jobId, 'match', completed, total, `Retry pass ${retryPass + 1}...`),
       );
-
-      searchCompleted += channels.length;
     }
 
     // Job complete
     if (!signal.aborted) {
       await this.store.updateJobStatus(jobId, 'completed');
-      this.report(jobId, 'match', totalCompleted, totalCompleted, 'Pipeline complete');
+      const finalTasks = await this.store.getTasksByJob(jobId);
+      const completedCount = finalTasks.filter((t) => t.status === 'succeeded').length;
+      await this.store.updateJobProgress(jobId, completedCount, finalTasks.length);
+      this.report(jobId, 'match', completedCount, finalTasks.length, 'Pipeline complete');
+
+      // Log per-platform summary
+      this.logRunSummary(finalTasks);
     }
 
     this.activeRuns.delete(jobId);
@@ -437,7 +510,7 @@ export class Orchestrator {
     kind: string,
     batchSize: number,
     signal: AbortSignal,
-    handler: (task: Task) => Promise<{ success: boolean; result?: unknown; error?: string }>,
+    handler: (task: Task) => Promise<{ success: boolean; result?: unknown; error?: string; errorClass?: ErrorClass }>,
   ): Promise<number> {
     let processed = 0;
 
@@ -452,15 +525,29 @@ export class Orchestrator {
         matching.map(async (task) => {
           await this.store.updateTaskStatus(task.id, 'in_flight');
           const result = await handler(task);
+
           if (result.success) {
+            // Report success to limiter for the source
+            const source = this.extractSource(task);
+            if (source) this.limiter.reportSuccess(source);
             await this.store.updateTaskStatus(task.id, 'succeeded', result.result);
           } else {
-            // Check if we should retry
-            if (task.attempts + 1 >= task.maxAttempts) {
-              await this.store.updateTaskStatus(task.id, 'failed_permanent', undefined, result.error);
+            // Classify the error
+            const errClass = result.errorClass ?? classifyError({ errorMessage: result.error });
+            const targetStatus = errorClassToTaskStatus(errClass);
+            const source = this.extractSource(task);
+
+            // Report to limiter for rate_limited/blocked
+            if (source && (errClass === 'rate_limited' || errClass === 'blocked')) {
+              this.limiter.reportFailure(source);
+            }
+
+            // Check max attempts for retryable errors
+            const maxForClass = BACKOFF_CONFIG[errClass]?.maxAttempts ?? task.maxAttempts;
+            if (targetStatus === 'failed_retryable' && task.attempts + 1 >= maxForClass) {
+              await this.store.updateTaskStatus(task.id, 'failed_permanent', undefined, result.error, errClass, `Exhausted ${maxForClass} attempts`);
             } else {
-              // Reset to pending for retry
-              await this.store.updateTaskStatus(task.id, 'pending', undefined, result.error);
+              await this.store.updateTaskStatus(task.id, targetStatus, undefined, result.error, errClass, result.error);
             }
           }
           return result;
@@ -479,6 +566,35 @@ export class Orchestrator {
     }
 
     return processed;
+  }
+
+  /** Extract source key from task kind (e.g. 'search:bitchute' → 'bitchute') */
+  private extractSource(task: Task): string | null {
+    if (task.kind.startsWith('search:')) return task.kind.replace('search:', '');
+    if (task.kind === 'scrape_links') return 'youtube-web';
+    if (task.kind === 'enrich') return 'youtube-api';
+    return null;
+  }
+
+  /** Log a per-platform summary table at end of run. */
+  private logRunSummary(tasks: Task[]): void {
+    const searchTasks = tasks.filter(t => t.kind.startsWith('search:'));
+    const byPlatform = new Map<string, Task[]>();
+    for (const t of searchTasks) {
+      const platform = t.kind.replace('search:', '');
+      if (!byPlatform.has(platform)) byPlatform.set(platform, []);
+      byPlatform.get(platform)!.push(t);
+    }
+
+    const lines: string[] = ['[orchestrator] Run summary:'];
+    for (const [platform, pts] of byPlatform) {
+      const succeeded = pts.filter(t => t.status === 'succeeded').length;
+      const retryable = pts.filter(t => t.status === 'failed_retryable').length;
+      const permanent = pts.filter(t => t.status === 'failed_permanent').length;
+      const skipped = pts.filter(t => t.status === 'skipped').length;
+      lines.push(`  ${platform}: ${succeeded} ok, ${retryable} retryable, ${permanent} permanent, ${skipped} skipped (${pts.length} total)`);
+    }
+    process.stderr.write(lines.join('\n') + '\n');
   }
 
   private createAdapters(config: PipelineConfig): Map<string, PlatformAdapter> {

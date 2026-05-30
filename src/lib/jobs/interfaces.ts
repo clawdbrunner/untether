@@ -26,6 +26,7 @@ export interface JobStore {
   createTasks(jobId: string, tasks: Omit<Task, 'id'>[]): Promise<Task[]>;
   getNextPendingTasks(jobId: string, limit: number): Promise<Task[]>;
   getTasksByJob(jobId: string): Promise<Task[]>;
+  getRetryableTasks(jobId: string): Promise<Task[]>;
   updateTaskStatus(taskId: string, status: TaskStatus, result?: unknown, error?: string, errorClass?: ErrorClass, errorDetail?: string): Promise<void>;
 
   // Selections (user-confirmed matches)

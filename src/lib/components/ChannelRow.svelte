@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { YouTubeChannel, MatchResult } from '$lib/types';
+	import type { YouTubeChannel, MatchResult, TaskStatus, ErrorClass } from '$lib/types';
 	import CandidateCell from './CandidateCell.svelte';
 
 	let {
@@ -8,6 +8,7 @@
 		matchesByPlatform,
 		selections,
 		selectedIndices,
+		taskStatuses,
 		onaccept,
 		onskip,
 		onselectcandidate
@@ -17,6 +18,7 @@
 		matchesByPlatform: Map<string, MatchResult>;
 		selections: Map<string, string>;
 		selectedIndices: Map<string, number>;
+		taskStatuses?: Map<string, { status: TaskStatus; errorClass?: ErrorClass }>;
 		onaccept: (platform: string) => void;
 		onskip: (platform: string) => void;
 		onselectcandidate: (platform: string, index: number) => void;
@@ -52,6 +54,7 @@
 
 	{#each platforms as platform}
 		{@const match = matchesByPlatform.get(platform)}
+		{@const ts = taskStatuses?.get(platform)}
 		<div class="platform-cell">
 			<CandidateCell
 				candidates={match?.candidates ?? []}
@@ -59,6 +62,8 @@
 				channelName={channel.title}
 				accepted={selections.has(platform)}
 				selectedIndex={selectedIndices.get(platform) ?? 0}
+				taskStatus={ts?.status}
+				taskErrorClass={ts?.errorClass}
 				onaccept={() => onaccept(platform)}
 				onskip={() => onskip(platform)}
 				onselect={(i) => onselectcandidate(platform, i)}

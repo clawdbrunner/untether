@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ScoredCandidate, ConfidenceTier } from '$lib/types';
+	import type { ScoredCandidate, ConfidenceTier, TaskStatus, ErrorClass } from '$lib/types';
 	import TierBadge from './TierBadge.svelte';
 	import AvatarCompare from './AvatarCompare.svelte';
 
@@ -9,6 +9,8 @@
 		channelName = '',
 		accepted = false,
 		selectedIndex = 0,
+		taskStatus,
+		taskErrorClass,
 		onaccept,
 		onskip,
 		onselect
@@ -18,6 +20,8 @@
 		channelName?: string;
 		accepted: boolean;
 		selectedIndex: number;
+		taskStatus?: TaskStatus;
+		taskErrorClass?: ErrorClass;
 		onaccept: () => void;
 		onskip: () => void;
 		onselect: (index: number) => void;
@@ -53,7 +57,28 @@
 	}
 </script>
 
-{#if !hasCandidate}
+{#if taskStatus === 'failed_retryable'}
+	<div class="cell cell-warning">
+		<span class="status-icon warning-icon">&#x26A0;</span>
+		<span class="status-text">Retryable error</span>
+		{#if taskErrorClass}
+			<span class="error-class">{taskErrorClass}</span>
+		{/if}
+	</div>
+{:else if taskStatus === 'failed_permanent'}
+	<div class="cell cell-error">
+		<span class="status-icon error-icon">&#x2717;</span>
+		<span class="status-text">Permanent failure</span>
+		{#if taskErrorClass}
+			<span class="error-class">{taskErrorClass}</span>
+		{/if}
+	</div>
+{:else if taskStatus === 'skipped'}
+	<div class="cell cell-skipped">
+		<span class="status-icon skipped-icon">&#x2014;</span>
+		<span class="status-text">Skipped</span>
+	</div>
+{:else if !hasCandidate}
 	<div class="cell empty">
 		<span class="no-match">— No match —</span>
 	</div>
@@ -415,6 +440,65 @@
 
 	.alt-handle {
 		font-size: 0.7rem;
+		color: var(--text-muted);
+	}
+
+	.cell-warning {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 80px;
+		border-color: var(--possible, #e8a838);
+		background: color-mix(in srgb, var(--possible, #e8a838) 5%, var(--bg-card));
+	}
+
+	.cell-error {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 80px;
+		border-color: var(--danger, #e53e3e);
+		background: color-mix(in srgb, var(--danger, #e53e3e) 5%, var(--bg-card));
+	}
+
+	.cell-skipped {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 80px;
+		border-style: dashed;
+		opacity: 0.6;
+	}
+
+	.status-icon {
+		font-size: 1.1rem;
+		flex-shrink: 0;
+	}
+
+	.warning-icon {
+		color: var(--possible, #e8a838);
+	}
+
+	.error-icon {
+		color: var(--danger, #e53e3e);
+	}
+
+	.skipped-icon {
+		color: var(--text-muted);
+		text-decoration: line-through;
+	}
+
+	.status-text {
+		font-size: 0.85rem;
+		color: var(--text-secondary);
+		font-weight: 600;
+	}
+
+	.error-class {
+		font-size: 0.7rem;
+		padding: 1px 6px;
+		border-radius: 3px;
+		background: var(--bg-hover);
 		color: var(--text-muted);
 	}
 </style>

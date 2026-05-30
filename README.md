@@ -27,6 +27,8 @@ Upload a Google Takeout subscriptions CSV, and Untether searches for matching ch
 - **One-click verify** — click platform badges to open matched channels in a new tab
 - **Bulk actions** — accept all verified/likely matches at once
 - **Export** — download your confirmed matches
+- **Reliability** — automatic retries with per-error-class backoff, circuit breakers, and per-platform run summaries
+- **Concurrent matching** — searches all platforms in parallel with bounded global concurrency
 
 ## Quick Start
 
@@ -82,7 +84,7 @@ src/
     components/     # Svelte 5 UI components
     enrichment/     # YouTube channel enrichment (API + yt-dlp fallback)
     ingest/         # CSV parser for Google Takeout
-    jobs/           # Durable job orchestrator (SQLite-backed)
+    jobs/           # Durable job orchestrator, concurrent executor, error classifier, retry
     links/          # Declared link extraction
     matching/       # Scoring engine (name, handle, avatar, back-ref)
     plugins/        # Grayjay plugin runtime (isolated-vm sandbox)
@@ -95,6 +97,24 @@ data/
   platform-registry.csv   # Known video platforms
   peertube-instances.txt  # Known PeerTube instances
 ```
+
+## Reliability & Retry
+
+Tasks follow a 6-state lifecycle: `pending` → `in_flight` → `succeeded` | `failed_retryable` | `failed_permanent` | `skipped`.
+
+Errors are classified into five categories:
+
+| Class          | Examples                    | Retry behavior                           |
+|----------------|-----------------------------|------------------------------------------|
+| `transient`    | 500, 502, timeout, ECONNRESET | Up to 5 attempts, 2s–60s exponential backoff |
+| `rate_limited` | 429                         | Up to 4 attempts, 30s–15min backoff       |
+| `blocked`      | 403, Cloudflare challenge   | Up to 3 attempts, 60s–30min backoff       |
+| `not_found`    | 404                         | Treated as success (no match on platform) |
+| `permanent`    | 400, parse failure          | No retry                                 |
+
+After the initial pass, up to 2 automatic retry passes run for `failed_retryable` tasks whose backoff has elapsed. A manual "Retry failed" button is available in the UI and via `POST /api/jobs/:id/retry`.
+
+The `GET /api/jobs/:id/report` endpoint returns a per-platform summary including succeeded/matched/failed/skipped counts and error breakdowns.
 
 ## Tech Stack
 

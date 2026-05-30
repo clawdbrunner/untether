@@ -13,6 +13,7 @@ import type {
   ConfidenceTier,
 } from '../types.js';
 import type { JobStore } from './interfaces.js';
+import { getBackoffForClass } from './error-classifier.js';
 
 const DEFAULT_DB_PATH = join(process.cwd(), '.cache', 'untether', 'jobs.db');
 const JOB_RETENTION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -203,11 +204,23 @@ export class SqliteJobStore implements JobStore {
     return rows.map(r => this.rowToTask(r));
   }
 
+  async getRetryableTasks(jobId: string): Promise<Task[]> {
+    const now = Date.now();
+    const rows = this.db.prepare(`
+      SELECT * FROM tasks
+      WHERE job_id = ? AND status = 'failed_retryable' AND (next_eligible_at IS NULL OR next_eligible_at <= ?)
+      ORDER BY kind, target_key
+    `).all(jobId, now) as TaskRow[];
+    return rows.map(r => this.rowToTask(r));
+  }
+
   async updateTaskStatus(taskId: string, status: TaskStatus, result?: unknown, error?: string, errorClass?: ErrorClass, errorDetail?: string): Promise<void> {
     const current = this.db.prepare('SELECT attempts FROM tasks WHERE id = ?').get(taskId) as { attempts: number } | undefined;
     const newAttempts = (current?.attempts ?? 0) + 1;
     const now = Date.now();
-    const nextEligibleAt = status === 'failed_retryable' ? now + 2000 : null;
+    const nextEligibleAt = status === 'failed_retryable' && errorClass
+      ? now + getBackoffForClass(errorClass, newAttempts)
+      : status === 'failed_retryable' ? now + 2000 : null;
 
     this.db.prepare(`
       UPDATE tasks SET status = ?, attempts = ?, last_error = ?, result_json = ?,
