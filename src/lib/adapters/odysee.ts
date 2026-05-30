@@ -58,7 +58,7 @@ export class OdyseeAdapter implements PlatformAdapter {
         if (resolved) candidates.push(resolved);
       }
 
-      await this.cache.setSearchResults('odysee', query, candidates);
+      if (candidates.length > 0) await this.cache.setSearchResults('odysee', query, candidates);
       return candidates;
     } catch {
       this.limiter.reportFailure('odysee');

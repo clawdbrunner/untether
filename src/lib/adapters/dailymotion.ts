@@ -49,7 +49,7 @@ export class DailymotionAdapter implements PlatformAdapter {
       const data: DmSearchResponse = await resp.json();
       const candidates = (data.list || []).map(u => this.mapToCandidate(u));
 
-      await this.cache.setSearchResults('dailymotion', query, candidates);
+      if (candidates.length > 0) await this.cache.setSearchResults('dailymotion', query, candidates);
       return candidates;
     } catch {
       this.limiter.reportFailure('dailymotion');

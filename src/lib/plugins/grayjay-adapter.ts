@@ -73,7 +73,7 @@ export class GrayjayPluginAdapter implements PlatformAdapter {
       results = await this.searchDirect(query);
     }
 
-    await this.cache.setSearchResults(this.sourceKey, query, results);
+    if (results.length > 0) await this.cache.setSearchResults(this.sourceKey, query, results);
     return results;
   }
 

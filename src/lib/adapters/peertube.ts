@@ -57,7 +57,7 @@ export class PeerTubeAdapter implements PlatformAdapter {
       const data: SepiaSearchResponse = await resp.json();
       const candidates = data.data.map((item) => this.mapToCandidate(item));
 
-      await this.cache.setSearchResults('peertube', query, candidates);
+      if (candidates.length > 0) await this.cache.setSearchResults('peertube', query, candidates);
       return candidates;
     } catch {
       this.limiter.reportFailure('peertube');
