@@ -23,6 +23,11 @@
 		score: number;
 	}
 
+	const platformLabels: Record<string, string> = {
+		peertube: 'PeerTube', odysee: 'Odysee', dailymotion: 'Dailymotion',
+		bitchute: 'BitChute', rumble: 'Rumble'
+	};
+
 	function getEntries(): ExportEntry[] {
 		const entries: ExportEntry[] = [];
 
@@ -77,7 +82,7 @@
 		}
 
 		for (const [platform, platformEntries] of byPlatform) {
-			const label = platform === 'peertube' ? 'PeerTube' : 'Odysee';
+			const label = platformLabels[platform] ?? platform;
 			lines.push(`# ${label} (${platformEntries.length} channels)`);
 			for (const e of platformEntries) {
 				lines.push(e.url);
@@ -88,9 +93,11 @@
 	}
 
 	function generateNewpipe(entries: ExportEntry[]): string {
-		const ptEntries = entries.filter((e) => e.platform === 'peertube');
-		const subscriptions = ptEntries.map((e) => ({
-			service_id: 4,
+		const serviceIdMap: Record<string, number> = {
+			peertube: 4, youtube: 0, soundcloud: 2,
+		};
+		const subscriptions = entries.map((e) => ({
+			service_id: serviceIdMap[e.platform] ?? 0,
 			url: e.url,
 			name: e.channelTitle
 		}));
@@ -187,7 +194,7 @@
 					onclick={() => format = 'newpipe'}
 				>
 					<span class="format-name">NewPipe (.json)</span>
-					<span class="format-desc">PeerTube only</span>
+					<span class="format-desc">All platforms</span>
 				</button>
 				<button
 					class="format-card"
@@ -203,7 +210,7 @@
 		<div class="platform-counts">
 			{#each [...platformCounts()] as [platform, count]}
 				<span class="count-badge">
-					{platform === 'peertube' ? 'PeerTube' : 'Odysee'}: {count}
+					{platformLabels[platform] ?? platform}: {count}
 				</span>
 			{/each}
 		</div>
