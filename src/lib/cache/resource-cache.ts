@@ -18,7 +18,7 @@ export class ResourceCache {
 
   constructor(baseDir: string) {
     this.baseDir = baseDir;
-    for (const sub of ['enrichment', 'links', 'search/peertube', 'search/odysee', 'search/bitchute', 'search/rumble', 'avatars', 'scrape', 'plugins']) {
+    for (const sub of ['enrichment', 'links', 'search/peertube', 'search/odysee', 'search/bitchute', 'search/rumble', 'search/dailymotion', 'avatars', 'scrape', 'plugins']) {
       mkdirSync(join(this.baseDir, sub), { recursive: true });
     }
   }
