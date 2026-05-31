@@ -44,7 +44,10 @@ export class ResourceCache {
   // --- Search results ---
   async getSearchResults(platform: string, query: string): Promise<ChannelCandidate[] | null> {
     const hash = this.hashKey(query.toLowerCase().trim());
-    return this.read(join('search', platform, `${hash}.json`), TTL_SEARCH);
+    const result = this.read<ChannelCandidate[]>(join('search', platform, `${hash}.json`), TTL_SEARCH);
+    // Empty arrays from stale cache entries (pre-fix) should not be treated as valid results
+    if (Array.isArray(result) && result.length === 0) return null;
+    return result;
   }
 
   async setSearchResults(platform: string, query: string, results: ChannelCandidate[]): Promise<void> {
